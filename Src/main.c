@@ -80,6 +80,9 @@
 	
 	volatile uint32_t encoder_reading =0;
 	char encoder_buffer[20];
+	uint32_t dis=0 ;
+	uint32_t fullcounter =0;
+	uint32_t counter;
 
 /* USER CODE END PV */
 
@@ -138,7 +141,8 @@ int main(void)
   while (1)
   {
 	
-		
+		counter = counter + encoder_reading;
+		dis = (55*counter)/fullcounter;
 		if(rec == 0)
 		{
 			throttel_left = 0;
@@ -156,6 +160,7 @@ int main(void)
 			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
 			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
 			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+			
 		}
 		
 			
@@ -317,6 +322,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		else if(throttle_counter_right_motor == 1)HAL_GPIO_WritePin(stepper_port,  stepper2_sig , HIGH);             //Set output 4 high to create a pulse for the stepper controller
 		else if(throttle_counter_right_motor == 2)HAL_GPIO_WritePin(stepper_port,  stepper2_sig , LOW);           //Set output 4 low because the pulse only has to last for 20us
 		
+	}
+	if(htim->Instance == TIM4)
+	{
+		counter = counter + fullcounter;
 	}
 	
 }

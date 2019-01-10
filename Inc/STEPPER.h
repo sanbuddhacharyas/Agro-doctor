@@ -16,8 +16,9 @@
 
 
 
-
+extern volatile uint32_t encoder_reading;
 void servo(int angle ,TIM_HandleTypeDef* htim);
+void distance (int )
 
 
 #endif
