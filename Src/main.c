@@ -52,8 +52,22 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+
+struct __FILE{
+	
+int handle;
+};
+
+FILE __stdout;
+FILE __stdin;
+
+int fputc(int ch, FILE *f)
+{
+	ITM_SendChar(ch);
+	return(ch);
+}
 	int throttel_left_counter=0 , throttle_counter_right_motor , throttel_previous_memory , throttel_left,throttel_right,left_motor,right_motor,throttle_right_motor_memory;
-  int forward_speed = 20;
+  volatile int forward_speed = 15;
 	int turning_speed = 5;
 	int direction_left , direction_right;
 	int forward_pid , turning_pid;
@@ -68,7 +82,8 @@
 	float cal;
 	char str[40];
 	int speed_counter=0;
-	int bad=0;
+
+
 
 	int receive_buffer[15] ={0};
 	int receive =0 ,rec=0;
@@ -78,11 +93,16 @@
 	int speed_memory=100,speed=0;
 	char d[30] = "hello \r\n";
 	
-	volatile uint32_t encoder_reading =0;
+	volatile uint32_t encoder_reading_wheel =0;
+	volatile uint32_t encoder_reading_left_right =0;
+	volatile int direction_wheel;
+	volatile int direction_left_right;
 	char encoder_buffer[20];
-	uint32_t dis=0 ;
-	uint32_t fullcounter =0;
-	uint32_t counter;
+	uint32_t counter=0;
+	float angle;
+	float omega;
+	uint32_t count=0;
+	uint32_t displacement =0 ;
 
 /* USER CODE END PV */
 
@@ -124,25 +144,47 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM2_Init();
-  MX_TIM3_Init();
   MX_USART2_UART_Init();
   MX_TIM4_Init();
+  MX_TIM3_Init();
+  MX_TIM5_Init();
+  MX_TIM6_Init();
 
   /* USER CODE BEGIN 2 */
-	HAL_TIM_Encoder_Start_IT(&htim4,TIM_CHANNEL_1);
+	HAL_TIM_Encoder_Start_IT(&htim4,TIM_CHANNEL_ALL);
+	//HAL_TIM_Encoder_Start_IT(&htim5,TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 	HAL_TIM_Base_Start_IT(&htim3);
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
+	uint32_t x =0;
+	uint8_t dt =5;
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
+	htim2.Instance->CCR1 = 2800;//(int)((20 - forward_speed) * (2800 / 17));
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+	x = HAL_GetTick();
   while (1)
   {
+		
+		displacement = count * 4320 + encoder_reading_wheel;
+		/*
+		if(HAL_GetTick() - x >= dt)
+		{
+			x = HAL_GetTick();
+			omega = (6.2831 * TIM4->CNT*50)/4320;
+			TIM4->CNT =0;
+			printf("%f\n",omega);
+		}
+		*/
+		
+		//angle = left_right_angle();
+			
 	
-		counter = counter + encoder_reading;
-		dis = (55*counter)/fullcounter;
 		if(rec == 0)
 		{
 			throttel_left = 0;
@@ -156,11 +198,11 @@ int main(void)
 		
 		 else if(rec == 1)
 		{
-			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
-			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
-			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
-			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-			
+				move()
+//			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
+//			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
+//			htim2.Instance->CCR1 = 2800;//(int)((20 - forward_speed) * (2800 / 17));
+//			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 		}
 		
 			
@@ -197,8 +239,8 @@ int main(void)
 		else if(rec == 6)
 		{
 			
-			throttel_left = forward_speed ;
-			throttel_right = forward_speed; 
+			throttel_left = 70 ;
+			throttel_right = 70; 
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
 			HAL_GPIO_WritePin(sig_port,sig2,GPIO_PIN_RESET);
 			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
@@ -209,8 +251,8 @@ int main(void)
 		else if(rec == 5)
 		{
 			
-			throttel_left = -forward_speed ;
-			throttel_right = -forward_speed ;
+			throttel_left = -70 ;
+			throttel_right = -70 ;
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
 			HAL_GPIO_WritePin(sig_port,sig2,GPIO_PIN_RESET);
 			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
@@ -218,7 +260,6 @@ int main(void)
 			
 			}
 	
-		
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
@@ -291,6 +332,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	
 	if(htim->Instance == TIM3)
 	{
+		//HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
 			
 		throttel_left_counter ++;                                        //Increase the throttel_left_counter variable by 1 every time this routine is executed
 		if(throttel_left_counter > throttel_previous_memory )
@@ -325,7 +367,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	}
 	if(htim->Instance == TIM4)
 	{
-		counter = counter + fullcounter;
+		if(direction_wheel == Front)
+			count++;
+		
+		else
+			count--;
+		
 	}
 	
 }

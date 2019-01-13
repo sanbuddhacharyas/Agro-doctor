@@ -1,0 +1,32 @@
+#MOTORs(4)
+->Base Motor
+->Arm(part-3)
+->Nossel
+->Extra
+
+#stepper(4)
+->Arm Yaw rotation
+->Base left_right
+->Arm(Part-1)
+->Arm(Part-2)
+->extra
+
+#servo(1)
+->??
+
+#Uart(3)
+->??
+
+#encoder(3)
+->Wheel Encoder(4369ppr) x 2
+->Linear Encoder(120ppc)
+
+#MPU(3)
+->ARM(part-1)(I2C1)
+->ARM(Part-2)(I2C1)
+->ARM(part-3)(I2C2)
+
+#Humidity and PH.	
+	
+	
+	

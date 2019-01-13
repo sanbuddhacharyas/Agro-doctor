@@ -55,8 +55,16 @@
 #define Stepper_Signal_GPIO_Port GPIOC
 #define Stepper_Direction_Pin GPIO_PIN_3
 #define Stepper_Direction_GPIO_Port GPIOC
-#define Base_Motor_PWM_Pin GPIO_PIN_0
+#define left_right_encoder1_Pin GPIO_PIN_0
+#define left_right_encoder1_GPIO_Port GPIOA
+#define left_right_encoder2_Pin GPIO_PIN_1
+#define left_right_encoder2_GPIO_Port GPIOA
+#define Base_Motor_PWM_Pin GPIO_PIN_5
 #define Base_Motor_PWM_GPIO_Port GPIOA
+#define wheel_enco2_Pin GPIO_PIN_12
+#define wheel_enco2_GPIO_Port GPIOD
+#define wheel_enco1_Pin GPIO_PIN_13
+#define wheel_enco1_GPIO_Port GPIOD
 
 /* ########################## Assert Selection ############################## */
 /**

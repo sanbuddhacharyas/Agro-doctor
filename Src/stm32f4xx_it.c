@@ -36,8 +36,14 @@
 #include "stm32f4xx_it.h"
 
 /* USER CODE BEGIN 0 */
-extern volatile uint32_t encoder_reading;
-extern char encoder_buffer[20];
+#include "STEPPER.h"
+extern volatile uint32_t encoder_reading_wheel;
+extern volatile uint32_t encoder_reading_left_right;
+extern volatile int direction_wheel;
+extern volatile int direction_left_right;
+//uint32_t encoder_reading_wheel_prev;
+//uint32_t encoder_reading_left_right_prev;
+
 
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
@@ -48,6 +54,8 @@ extern UART_HandleTypeDef huart2;
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim5;
+extern TIM_HandleTypeDef htim6;
 extern UART_HandleTypeDef huart2;
 
 /******************************************************************************/
@@ -216,8 +224,13 @@ void TIM4_IRQHandler(void)
   /* USER CODE END TIM4_IRQn 0 */
   HAL_TIM_IRQHandler(&htim4);
   /* USER CODE BEGIN TIM4_IRQn 1 */
-	encoder_reading = TIM4->CNT;
-	sprintf(encoder_buffer,"%d\n",encoder_reading);
+	//encoder_reading_wheel = TIM4->CNT;
+	if(encoder_reading_wheel > TIM4->CNT)
+		direction_wheel = Front;
+	else if(encoder_reading_wheel < TIM4->CNT)
+		direction_wheel = Back;
+	
+	encoder_reading_wheel = TIM4->CNT;
 	
   /* USER CODE END TIM4_IRQn 1 */
 }
@@ -234,6 +247,42 @@ void USART2_IRQHandler(void)
   /* USER CODE BEGIN USART2_IRQn 1 */
 
   /* USER CODE END USART2_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM5 global interrupt.
+*/
+void TIM5_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM5_IRQn 0 */
+
+  /* USER CODE END TIM5_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim5);
+  /* USER CODE BEGIN TIM5_IRQn 1 */
+	if(encoder_reading_left_right > TIM5->CNT)
+		direction_left_right = Right;
+	
+	else if(encoder_reading_left_right < TIM5->CNT)
+		direction_left_right = Left;
+	
+	encoder_reading_left_right = TIM5->CNT;
+
+  /* USER CODE END TIM5_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM6 global interrupt, DAC1 and DAC2 underrun error interrupts.
+*/
+void TIM6_DAC_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
+
+  /* USER CODE END TIM6_DAC_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim6);
+  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
+	
+
+  /* USER CODE END TIM6_DAC_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
