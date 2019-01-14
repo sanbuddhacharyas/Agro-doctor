@@ -153,32 +153,32 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>receive_buffer[15],0x0A</ItemText>
+          <ItemText>encoder_reading_wheel,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>hrottel_left_counter</ItemText>
+          <ItemText>encoder_wheel_state,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>throttel_left_counter</ItemText>
+          <ItemText>encoder_reading_pre,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>range</ItemText>
+          <ItemText>c,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>receive</ItemText>
+          <ItemText>travel</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>bad</ItemText>
+          <ItemText>angle</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
@@ -188,7 +188,7 @@
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>encoder_reading_wheel,0x0A</ItemText>
+          <ItemText>angl</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

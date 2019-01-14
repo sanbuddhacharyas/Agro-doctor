@@ -26,7 +26,8 @@
 ->ARM(Part-2)(I2C1)
 ->ARM(part-3)(I2C2)
 
-#Humidity and PH.	
+#(ADC)
+Humidity and PH	
 	
 	
 	

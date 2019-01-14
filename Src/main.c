@@ -67,7 +67,7 @@ int fputc(int ch, FILE *f)
 	return(ch);
 }
 	int throttel_left_counter=0 , throttle_counter_right_motor , throttel_previous_memory , throttel_left,throttel_right,left_motor,right_motor,throttle_right_motor_memory;
-  volatile int forward_speed = 15;
+  volatile int forward_speed = 16;
 	int turning_speed = 5;
 	int direction_left , direction_right;
 	int forward_pid , turning_pid;
@@ -82,6 +82,8 @@ int fputc(int ch, FILE *f)
 	float cal;
 	char str[40];
 	int speed_counter=0;
+	volatile uint16_t encoder_reading_pre =0;
+
 
 
 
@@ -90,19 +92,23 @@ int fputc(int ch, FILE *f)
 	int range =0;
 	int buff_sum=0;
 	uint8_t data;
-	int speed_memory=100,speed=0;
+	uint32_t x =0;
+	uint8_t dt =5;
+	
 	char d[30] = "hello \r\n";
 	
 	volatile uint32_t encoder_reading_wheel =0;
 	volatile uint32_t encoder_reading_left_right =0;
-	volatile int direction_wheel;
-	volatile int direction_left_right;
+	volatile float velocity= 0;
+	volatile uint8_t direction_wheel;
+	volatile uint8_t direction_left_right;
 	char encoder_buffer[20];
-	uint32_t counter=0;
+	volatile uint32_t count=0;
+	float displacement =0 ;
+	uint32_t  distance =0 ;
+	uint32_t encoder_wheel_state=0;
+	uint32_t reading_pre=0;
 	float angle;
-	float omega;
-	uint32_t count=0;
-	uint32_t displacement =0 ;
 
 /* USER CODE END PV */
 
@@ -152,26 +158,23 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 	HAL_TIM_Encoder_Start_IT(&htim4,TIM_CHANNEL_ALL);
-	//HAL_TIM_Encoder_Start_IT(&htim5,TIM_CHANNEL_2);
+	HAL_TIM_Encoder_Start_IT(&htim5,TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 	HAL_TIM_Base_Start_IT(&htim3);
+	HAL_TIM_Base_Start_IT(&htim6);
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
-	uint32_t x =0;
-	uint8_t dt =5;
+	
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
-	HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
-	htim2.Instance->CCR1 = 2800;//(int)((20 - forward_speed) * (2800 / 17));
-	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-	x = HAL_GetTick();
+	
   while (1)
   {
 		
-		displacement = count * 4320 + encoder_reading_wheel;
+		//displacement = distance_travelled(encoder_reading_wheel);
+	
 		/*
 		if(HAL_GetTick() - x >= dt)
 		{
@@ -182,9 +185,9 @@ int main(void)
 		}
 		*/
 		
-		//angle = left_right_angle();
-			
-	
+	//angle = left_right_angle();
+	// set_angle(10, Right);
+		
 		if(rec == 0)
 		{
 			throttel_left = 0;
@@ -198,11 +201,26 @@ int main(void)
 		
 		 else if(rec == 1)
 		{
-				move()
+				TIM4->CNT = 0;
+				encoder_reading_wheel = 0;
+				encoder_reading_pre =0;
+			
+				distance = 50;
+				displacement = (distance/ 55) * fullcounter;
+			
+				move(4000, 20 ,Front);
+				TIM4->CNT = 0;
+				encoder_reading_wheel = 0;
+				encoder_reading_pre = 0;
+				set_angle(20,Right);
+			
+				move(4000, 20 ,Front);
+			
 //			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
 //			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
 //			htim2.Instance->CCR1 = 2800;//(int)((20 - forward_speed) * (2800 / 17));
 //			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+			
 		}
 		
 			
@@ -259,6 +277,7 @@ int main(void)
 			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 			
 			}
+			
 	
   /* USER CODE END WHILE */
 
@@ -328,6 +347,7 @@ void SystemClock_Config(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	char string[30];
+	
 
 	
 	if(htim->Instance == TIM3)
@@ -365,13 +385,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		else if(throttle_counter_right_motor == 2)HAL_GPIO_WritePin(stepper_port,  stepper2_sig , LOW);           //Set output 4 low because the pulse only has to last for 20us
 		
 	}
-	if(htim->Instance == TIM4)
+	
+	if(htim->Instance == TIM6)
 	{
-		if(direction_wheel == Front)
-			count++;
-		
-		else
-			count--;
+		//HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
+		dt = encoder_reading_wheel - reading_pre;
+		velocity = (0.83333 * dt );
+		reading_pre = encoder_reading_wheel;
 		
 	}
 	
