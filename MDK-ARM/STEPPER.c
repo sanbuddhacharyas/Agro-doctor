@@ -16,6 +16,7 @@ extern volatile uint8_t direction_left_right;
 extern volatile int forward_speed;
 extern volatile float velocity;
 extern volatile int throttel_left, throttel_right;
+extern volatile uint16_t encoder_reading_pre;
 
 
 float distance_travelled(uint32_t encoder_reading_wheel)
@@ -40,14 +41,13 @@ float left_right_angle()
 
 void move(float distance, float velocity,int dir)
 {
-	
 	float dis;
 	
 	if(dir == Front)
 	{
 		while(distance > encoder_reading_wheel )
 		{
-			HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_SET);
+			//HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_SET);
 			
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
 			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
@@ -55,7 +55,9 @@ void move(float distance, float velocity,int dir)
 			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 		}
 		
-		HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);	
+		
+		
+		//HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);	
 	
 	}
 	
@@ -73,6 +75,12 @@ void move(float distance, float velocity,int dir)
 	
 	
 	}	
+	TIM4->CNT = 0;
+	encoder_reading_wheel = 0;
+	encoder_reading_pre = 0;
+	HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
+	HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
 			
 }
 
@@ -88,9 +96,7 @@ void set_angle(float ang,uint8_t direction)
 			throttel_left =  -70;
 			throttel_right = -70;	
 		}
-		throttel_left =  0;
-		throttel_right = 0;	
-		HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
+		
 	}
 
 	else if(direction == Left)
@@ -103,6 +109,8 @@ void set_angle(float ang,uint8_t direction)
 			throttel_left = 70;
 			throttel_right = 70;
 		}
-		HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
 	}
+	throttel_left =  0;
+	throttel_right = 0;	
+	HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
 }

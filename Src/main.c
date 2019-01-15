@@ -163,6 +163,11 @@ int main(void)
 	HAL_TIM_Base_Start_IT(&htim3);
 	HAL_TIM_Base_Start_IT(&htim6);
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
+	TIM4->CNT = 1;
+	encoder_reading_wheel = 1;
+	encoder_reading_pre =1;
+	direction_left_right =0 ;
+	TIM5->CNT = 0;
 	
 
   /* USER CODE END 2 */
@@ -172,6 +177,7 @@ int main(void)
 	
   while (1)
   {
+		
 		
 		//displacement = distance_travelled(encoder_reading_wheel);
 	
@@ -186,7 +192,7 @@ int main(void)
 		*/
 		
 	//angle = left_right_angle();
-	// set_angle(10, Right);
+	//  set_angle(10, Right);
 		
 		if(rec == 0)
 		{
@@ -201,25 +207,14 @@ int main(void)
 		
 		 else if(rec == 1)
 		{
-				TIM4->CNT = 0;
-				encoder_reading_wheel = 0;
-				encoder_reading_pre =0;
 			
-				distance = 50;
-				displacement = (distance/ 55) * fullcounter;
 			
-				move(4000, 20 ,Front);
-				TIM4->CNT = 0;
-				encoder_reading_wheel = 0;
-				encoder_reading_pre = 0;
-				set_angle(20,Right);
+				move(3000, 20 ,Front);
+				HAL_Delay(500);
+				set_angle(15,Right);
+				HAL_Delay(1000);
+				move(3000, 20 ,Front);
 			
-				move(4000, 20 ,Front);
-			
-//			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
-//			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
-//			htim2.Instance->CCR1 = 2800;//(int)((20 - forward_speed) * (2800 / 17));
-//			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 			
 		}
 		
@@ -445,6 +440,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 					rec = uart_rx;
 			
 			}
+		
 			
 			else
 			{
