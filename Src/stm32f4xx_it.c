@@ -38,7 +38,7 @@
 /* USER CODE BEGIN 0 */
 #include "STEPPER.h"
 #include <math.h>
-extern volatile uint32_t encoder_reading_wheel;
+extern volatile int32_t encoder_reading_wheel;
 extern volatile uint32_t encoder_reading_left_right;
 extern volatile uint8_t direction_wheel;
 extern volatile uint8_t direction_left_right;
@@ -48,6 +48,7 @@ uint8_t direction_prev;
 extern volatile uint16_t encoder_reading_pre;
 uint16_t encoder_5_times =0 ;
 int c;
+extern volatile int total_distance ;
 
 //uint32_t encoder_reading_wheel_prev;
 //uint32_t encoder_reading_left_right_prev;
@@ -260,11 +261,24 @@ void TIM4_IRQHandler(void)
 		
 	else
 	{
+			if((-encoder_reading_wheel) > fullcounter-3 && count == 1)
+		{
+			c--;
+			count = 0;
+		
+		}
+		else if((-encoder_reading_wheel) < fullcounter-3)
+		{
+			count = 1;
+		
+		}
 
-			encoder_reading_wheel =(fullcounter - TIM4->CNT);
+			encoder_reading_wheel = -(fullcounter - TIM4->CNT);
 	}
 	
+	total_distance = distance_travelled((c * fullcounter ) + encoder_reading_wheel );
 	encoder_reading_pre =TIM4->CNT;
+	
   /* USER CODE END TIM4_IRQn 1 */
 }
 

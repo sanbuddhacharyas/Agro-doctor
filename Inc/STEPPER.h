@@ -18,13 +18,13 @@
 #define Left 0
 #define Front 1
 #define Back 0
-#define fullcounter 5000
+#define fullcounter 8645
 void servo(int angle ,TIM_HandleTypeDef* htim);
 void pid_velocity(int distance);
 float left_right_angle();
 float distance_travelled(uint32_t encoder_reading_wheel);
-void move(float distance, float velocity,int direction);
+void move(uint32_t distance, float velocity,int direction);
 void set_angle(float angle,uint8_t direction);
-
+int pid(int16_t set_distance);
 
 #endif

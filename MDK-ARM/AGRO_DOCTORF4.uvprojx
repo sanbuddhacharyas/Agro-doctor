@@ -336,7 +336,7 @@
               <MiscControls>--C99</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;                       ../Drivers/STM32F4xx_HAL_Driver/Inc;                       ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;                       ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;                       ../Drivers/CMSIS/Include;                       ..\Inc</IncludePath>
+              <IncludePath>../Inc;                        ../Drivers/STM32F4xx_HAL_Driver/Inc;                        ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;                        ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;                        ../Drivers/CMSIS/Include;                        ..\Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -496,9 +496,9 @@
               <FilePath>..\Inc\STEPPER.h</FilePath>
             </File>
             <File>
-              <FileName>STEPPER.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\STEPPER.c</FilePath>
+              <FileName>stepper.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\stepper.cpp</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,4 +1,4 @@
-agro_doctorf4\stepper.o: STEPPER.c
+agro_doctorf4\stepper.o: stepper.cpp
 agro_doctorf4\stepper.o: ../Inc/STEPPER.h
 agro_doctorf4\stepper.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
 agro_doctorf4\stepper.o: ../Inc/stm32f4xx_hal_conf.h

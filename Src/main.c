@@ -83,6 +83,7 @@ int fputc(int ch, FILE *f)
 	char str[40];
 	int speed_counter=0;
 	volatile uint16_t encoder_reading_pre =0;
+	volatile int total_distance ;
 
 
 
@@ -97,18 +98,18 @@ int fputc(int ch, FILE *f)
 	
 	char d[30] = "hello \r\n";
 	
-	volatile uint32_t encoder_reading_wheel =0;
+	volatile int32_t encoder_reading_wheel =0;
 	volatile uint32_t encoder_reading_left_right =0;
 	volatile float velocity= 0;
 	volatile uint8_t direction_wheel;
 	volatile uint8_t direction_left_right;
 	char encoder_buffer[20];
 	volatile uint32_t count=0;
-	float displacement =0 ;
-	uint32_t  distance =0 ;
+	uint32_t distance = 0;
 	uint32_t encoder_wheel_state=0;
 	uint32_t reading_pre=0;
 	float angle;
+	float ds =0 ;
 
 /* USER CODE END PV */
 
@@ -168,7 +169,7 @@ int main(void)
 	encoder_reading_pre =1;
 	direction_left_right =0 ;
 	TIM5->CNT = 0;
-	
+
 
   /* USER CODE END 2 */
 
@@ -207,13 +208,16 @@ int main(void)
 		
 		 else if(rec == 1)
 		{
-			
-			
-				move(3000, 20 ,Front);
-				HAL_Delay(500);
-				set_angle(15,Right);
-				HAL_Delay(1000);
-				move(3000, 20 ,Front);
+				ds  = 40;
+				distance =  ds *fullcounter * 0.018181818182 ;
+				move(distance, 20 ,Front);
+				//HAL_Delay(500);
+				//set_angle(-15,Left);
+				//HAL_Delay(1000);
+				//TIM4->CNT = 0;
+				//encoder_reading_wheel = 0;
+				//encoder_reading_pre =0;
+				//move(3000, 20 ,Front);
 			
 			
 		}
@@ -232,8 +236,8 @@ int main(void)
 		else if(rec == 3)
 		{
 			
-			throttel_left =  70;
-			throttel_right = 70;
+			throttel_left =  65;
+			throttel_right = 65;
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 			
 		
@@ -241,8 +245,8 @@ int main(void)
 		else if(rec == 4)
 		{
 			
-			throttel_left = -70;
-			throttel_right = -70;
+			throttel_left = -66;
+			throttel_right = -66;
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 		
 		}
@@ -252,8 +256,8 @@ int main(void)
 		else if(rec == 6)
 		{
 			
-			throttel_left = 70 ;
-			throttel_right = 70; 
+			throttel_left = 60 ;
+			throttel_right = 60; 
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
 			HAL_GPIO_WritePin(sig_port,sig2,GPIO_PIN_RESET);
 			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
@@ -383,10 +387,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	
 	if(htim->Instance == TIM6)
 	{
-		//HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
-		dt = encoder_reading_wheel - reading_pre;
-		velocity = (0.83333 * dt );
-		reading_pre = encoder_reading_wheel;
+		
+		
 		
 	}
 	
@@ -440,7 +442,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 					rec = uart_rx;
 			
 			}
-		
+			
 			
 			else
 			{

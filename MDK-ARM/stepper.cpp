@@ -7,9 +7,11 @@ float radius =3;
 float wheel_size = 55.6;
 float		travel = 0;
 float angl=0;
+uint16_t pid_error;
+uint32_t PID;
+uint8_t p_scalar, i_scalar, d_scalar;
 
-
-extern volatile int32_t encoder_reading_wheel;
+extern volatile uint32_t encoder_reading_wheel;
 extern volatile uint32_t encoder_reading_left_right;
 extern volatile uint8_t direction_wheel;
 extern volatile uint8_t direction_left_right;
@@ -17,6 +19,7 @@ extern volatile int forward_speed;
 extern volatile float velocity;
 extern volatile int throttel_left, throttel_right;
 extern volatile uint16_t encoder_reading_pre;
+extern volatile int total_distance ;
 
 
 float distance_travelled(uint32_t encoder_reading_wheel)
@@ -109,4 +112,27 @@ void set_angle(float ang,uint8_t direction)
 	throttel_left =  0;
 	throttel_right = 0;	
 	HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
+}
+
+int pid(int16_t set_distance)
+{
+	 pid_error = total_distance-set_distance;
+	 if(PID >10 || PID < -10)pid_error += PID * 0.015 ;
+
+	 float proportional = pid_error * p_scalar;
+	
+	 static float integral = 0;
+	 integral += pid_error * i_scalar;
+	 if(integral >  1000) integral = 1000; // limit wind-up
+	 if(integral < -1000) integral =-1000;
+
+	 static float previous_error = 0;
+	
+	 float derivative = (pid_error - previous_error) * d_scalar;
+	 previous_error = pid_error;
+	 PID = proportional+derivative+integral;
+	 if(PID > 1000) PID = 1000;
+	 if(PID <-1000)PID= -1000;
+	 
+	 if(PID <5 && PID>-5) PID =0;//Create a dead-band to stop the motors when the robot is balanced
 }
