@@ -22,46 +22,18 @@ Dialog DLL:      TCM.DLL V1.34.0.0
  
 <h2>Project:</h2>
 E:\san_projects\ARM\AGRO_DOCTORF4\MDK-ARM\AGRO_DOCTORF4.uvprojx
-Project File Date:  01/16/2019
+Project File Date:  01/17/2019
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
-*** Warning: Using Microlib and C++ file(s) might cause the linker to fail !
-  
 Build target 'AGRO_DOCTORF4'
-compiling stepper.cpp...
-../Inc/STEPPER.h(24): warning:  #1295-D: Deprecated declaration left_right_angle - give arg types
-  float left_right_angle();
-stepper.cpp(46): warning:  #177-D: variable "dis"  was declared but never referenced
-  	float dis;
-stepper.cpp(118): error:  #20: identifier "angle_gyro" is undefined
-  	 pid_error = angle_gyro-pid_setpoint-set_distance;
-stepper.cpp(118): error:  #20: identifier "pid_setpoint" is undefined
-  	 pid_error = angle_gyro-pid_setpoint-set_distance;
-stepper.cpp(119): warning:  #68-D: integer conversion resulted in a change of sign
-  		 if(PID >10 || PID < -10)pid_error += PID * 0.015 ;
-stepper.cpp(134): warning:  #68-D: integer conversion resulted in a change of sign
-  		 if(PID < -400)PID= -400;
-stepper.cpp(134): warning:  #68-D: integer conversion resulted in a change of sign
-  		 if(PID < -400)PID= -400;
-stepper.cpp(136): warning:  #68-D: integer conversion resulted in a change of sign
-  		 if(PID <5 && PID>-5) PID =0;//Create a dead-band to stop the motors when the robot is balanced
-stepper.cpp(137): warning:  #940-D: missing return statement at end of non-void function "pid" 
-  }
-stepper.cpp: 7 warnings, 2 errors
 compiling stm32f4xx_it.c...
 ../Inc/STEPPER.h(24): warning:  #1295-D: Deprecated declaration left_right_angle - give arg types
   float left_right_angle();
 ../Src/stm32f4xx_it.c: 1 warning, 0 errors
-compiling main.c...
-../Inc/STEPPER.h(24): warning:  #1295-D: Deprecated declaration left_right_angle - give arg types
-  float left_right_angle();
-../Src/main.c(211): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  				distance =  ds *fullcounter * 0.018181818182 ;
-../Src/main.c(347): warning:  #177-D: variable "string"  was declared but never referenced
-  	char string[30];
-../Src/main.c: 3 warnings, 0 errors
-"AGRO_DOCTORF4\AGRO_DOCTORF4.axf" - 2 Error(s), 11 Warning(s).
+linking...
+Program Size: Code=10184 RO-data=448 RW-data=132 ZI-data=1452  
+"AGRO_DOCTORF4\AGRO_DOCTORF4.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -84,8 +56,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.1.2
-Target not created.
-Build Time Elapsed:  00:00:11
+Build Time Elapsed:  00:00:12
 </pre>
 </body>
 </html>

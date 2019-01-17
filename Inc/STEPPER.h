@@ -25,6 +25,6 @@ float left_right_angle();
 float distance_travelled(uint32_t encoder_reading_wheel);
 void move(uint32_t distance, float velocity,int direction);
 void set_angle(float angle,uint8_t direction);
-int pid(int16_t set_distance);
+int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode);
 
 #endif

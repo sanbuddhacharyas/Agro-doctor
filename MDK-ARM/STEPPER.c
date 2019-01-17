@@ -5,11 +5,13 @@
 float linear_encoder_in_cm = 120 ;
 float radius =3;
 float wheel_size = 55.6;
-float		travel = 0;
+float	travel = 0;
 float angl=0;
+int pid_error;
+int PID;
+uint8_t p_scalar, i_scalar, d_scalar;
 
-
-extern volatile int32_t encoder_reading_wheel;
+extern volatile uint32_t encoder_reading_wheel;
 extern volatile uint32_t encoder_reading_left_right;
 extern volatile uint8_t direction_wheel;
 extern volatile uint8_t direction_left_right;
@@ -17,6 +19,7 @@ extern volatile int forward_speed;
 extern volatile float velocity;
 extern volatile int throttel_left, throttel_right;
 extern volatile uint16_t encoder_reading_pre;
+extern volatile int total_distance ;
 
 
 float distance_travelled(uint32_t encoder_reading_wheel)
@@ -41,8 +44,6 @@ float left_right_angle()
 
 void move(uint32_t distance, float velocity,int dir)
 {
-	float dis;
-	
 	
 	if(dir == Front)
 	{
@@ -110,3 +111,41 @@ void set_angle(float ang,uint8_t direction)
 	throttel_right = 0;	
 	HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
 }
+
+//Sets PID for required distance
+/*
+mode:0 for DC motor
+mode:1 for stepper
+
+Wind_up is the value to limit capacity of motor
+*/
+int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode)
+{
+	 pid_error = set_distance - total_distance;
+	 if(PID >10 || PID < -10)
+		 pid_error += PID * 0.015 ;
+
+	 float proportional = pid_error * p_scalar;//Proportional 
+	
+	 static float integral = 0;
+	 integral += pid_error * i_scalar; // Intregal 
+	 if(integral >  wind_up) integral = wind_up; // limit wind-up
+	 if(integral < - wind_up) integral =-wind_up;
+
+	 static float previous_error = 0;
+	
+	 float derivative = (pid_error - previous_error) * d_scalar;// Derivative
+	 previous_error = pid_error;
+	 PID = proportional+derivative+integral; // Required PID
+	 if(PID > wind_up) PID = wind_up;
+	 if(PID <-wind_up)PID= -wind_up;
+	 
+	 if(PID < 5 && PID>-5) 
+		 PID =0;//Create a dead-band to stop the motors when the robot is balanced
+	
+		if(mode == 0)
+			return PID;
+		else 
+			return 0;
+}
+

@@ -173,27 +173,17 @@
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>travel</ItemText>
+          <ItemText>total_distance,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>angle</ItemText>
+          <ItemText>direction_wheel,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>encoder_reading_left_right,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>7</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>angl</ItemText>
-        </Ww>
-        <Ww>
-          <count>8</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>distance</ItemText>
+          <ItemText>total_encoder,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -545,12 +535,12 @@
     <File>
       <GroupNumber>2</GroupNumber>
       <FileNumber>23</FileNumber>
-      <FileType>8</FileType>
+      <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\stepper.cpp</PathWithFileName>
-      <FilenameWithoutPath>stepper.cpp</FilenameWithoutPath>
+      <PathWithFileName>.\STEPPER.c</PathWithFileName>
+      <FilenameWithoutPath>STEPPER.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

@@ -114,25 +114,38 @@ void set_angle(float ang,uint8_t direction)
 	HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
 }
 
-int pid(int16_t set_distance)
-{
-	 pid_error = total_distance-set_distance;
-	 if(PID >10 || PID < -10)pid_error += PID * 0.015 ;
+//Sets PID for required distance
+/*
+mode:0 for DC motor
+mode:1 for stepper
 
-	 float proportional = pid_error * p_scalar;
+Wind_up is the value to limit capacity of motor
+*/
+int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode)
+{
+	 pid_error = set_distance - total_distance;
+	 if(PID >10 || PID < -10)
+		 pid_error += PID * 0.015 ;
+
+	 float proportional = pid_error * p_scalar;//Proportional 
 	
 	 static float integral = 0;
-	 integral += pid_error * i_scalar;
+	 integral += pid_error * i_scalar; // Intregal 
 	 if(integral >  1000) integral = 1000; // limit wind-up
 	 if(integral < -1000) integral =-1000;
 
 	 static float previous_error = 0;
 	
-	 float derivative = (pid_error - previous_error) * d_scalar;
+	 float derivative = (pid_error - previous_error) * d_scalar;// Derivative
 	 previous_error = pid_error;
-	 PID = proportional+derivative+integral;
+	 PID = proportional+derivative+integral; // Required PID
 	 if(PID > 1000) PID = 1000;
 	 if(PID <-1000)PID= -1000;
 	 
 	 if(PID <5 && PID>-5) PID =0;//Create a dead-band to stop the motors when the robot is balanced
+	
+		if(mode == 0)
+			return PID;
+		
 }
+

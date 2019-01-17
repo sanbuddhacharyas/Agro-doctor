@@ -68,19 +68,10 @@ int fputc(int ch, FILE *f)
 }
 	int throttel_left_counter=0 , throttle_counter_right_motor , throttel_previous_memory , throttel_left,throttel_right,left_motor,right_motor,throttle_right_motor_memory;
   volatile int forward_speed = 16;
-	int turning_speed = 5;
-	int direction_left , direction_right;
-	int forward_pid , turning_pid;
+	int _pid , turning_pid;
 	int buffer[30];
 	uint8_t uart_rx;
 	long int uart_buffer;
-	double del_x=0;
-	float X=0,init_angle;
-	float pid_setpoint=0,self_balance_pid_setpoint=0,pid_error=0,PID=0;
-	float pid_output_left, pid_output_right;
-	float p_scalar =11,i_scalar=0,d_scalar=0;
-	float cal;
-	char str[40];
 	int speed_counter=0;
 	volatile uint16_t encoder_reading_pre =0;
 	volatile int total_distance ;
@@ -104,7 +95,6 @@ int fputc(int ch, FILE *f)
 	volatile uint8_t direction_wheel;
 	volatile uint8_t direction_left_right;
 	char encoder_buffer[20];
-	volatile uint32_t count=0;
 	uint32_t distance = 0;
 	uint32_t encoder_wheel_state=0;
 	uint32_t reading_pre=0;
@@ -164,9 +154,9 @@ int main(void)
 	HAL_TIM_Base_Start_IT(&htim3);
 	HAL_TIM_Base_Start_IT(&htim6);
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
-	TIM4->CNT = 1;
-	encoder_reading_wheel = 1;
-	encoder_reading_pre =1;
+	TIM4->CNT = 11;
+	encoder_reading_wheel = 11;
+	encoder_reading_pre =11;
 	direction_left_right =0 ;
 	TIM5->CNT = 0;
 
@@ -345,10 +335,7 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	char string[30];
-	
-
-	
+		
 	if(htim->Instance == TIM3)
 	{
 		//HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
@@ -384,14 +371,34 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		else if(throttle_counter_right_motor == 2)HAL_GPIO_WritePin(stepper_port,  stepper2_sig , LOW);           //Set output 4 low because the pulse only has to last for 20us
 		
 	}
-	
+
+	//PID For motor
 	if(htim->Instance == TIM6)
 	{
+		_pid = pid(ds, 1000, 0 );
 		
-		
-		
+		if (_pid > 0 )
+		{
+			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_SET);
+			htim2.Instance->CCR1 = (int)(_pid * (2800 / 1000));
+			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+		}
+		else if (_pid < 0 )
+		{
+			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
+			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
+			htim2.Instance->CCR1 = (int)(_pid * (2800 / 1000));
+			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+		}
+		else
+		{
+			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
+			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
+			
+		}		
 	}
-	
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)

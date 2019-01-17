@@ -20,7 +20,7 @@
 "agro_doctorf4\tim.o"
 "agro_doctorf4\gpio.o"
 "agro_doctorf4\usart.o"
-"agro_doctorf4\stepper.o"
+"agro_doctorf4\stepper_1.o"
 "agro_doctorf4\system_stm32f4xx.o"
 "agro_doctorf4\startup_stm32f407xx.o"
 --library_type=microlib --strict --scatter "AGRO_DOCTORF4\AGRO_DOCTORF4.sct"

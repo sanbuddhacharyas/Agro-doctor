@@ -42,11 +42,12 @@ extern volatile int32_t encoder_reading_wheel;
 extern volatile uint32_t encoder_reading_left_right;
 extern volatile uint8_t direction_wheel;
 extern volatile uint8_t direction_left_right;
-extern volatile uint32_t count;
+uint8_t count=1,count1=1;
 extern uint32_t encoder_wheel_state;
-uint8_t direction_prev;
+uint8_t direction_prev=1;
 extern volatile uint16_t encoder_reading_pre;
 uint16_t encoder_5_times =0 ;
+int total_encoder;
 int c;
 extern volatile int total_distance ;
 
@@ -235,50 +236,66 @@ void TIM4_IRQHandler(void)
   /* USER CODE BEGIN TIM4_IRQn 1 */
 	//encoder_reading_wheel = TIM4->CNT;
 	
-	if(encoder_reading_pre < 5 && encoder_reading_pre >0   && encoder_reading_pre < TIM4->CNT  )
-		encoder_wheel_state = 1;
+	total_encoder = c * fullcounter + (encoder_reading_wheel-10);
+	total_distance = distance_travelled( total_encoder);
+	if(encoder_reading_pre < TIM4->CNT)
+		direction_wheel = Front;
+	else if(encoder_reading_pre > TIM4->CNT)
+		direction_wheel = Back;
 	
-	else if(encoder_reading_pre < (fullcounter) && encoder_reading_pre > (fullcounter -5) && encoder_reading_pre >TIM4->CNT)
+	if(total_encoder > 0 )
+		encoder_wheel_state = 1;
+	else if(total_encoder < 0 )
 		encoder_wheel_state =0 ;
 	
-	
 
-	if(encoder_wheel_state ==1)
+	if(encoder_wheel_state == 1)
 	{
-		if(encoder_reading_wheel > fullcounter-3 && count == 1)
+	
+		if(encoder_reading_wheel > fullcounter && direction_wheel == Front)
 		{
 			c++;
-			count = 0;
-		
+			TIM4->CNT =10;
+			encoder_reading_wheel = TIM4->CNT;
 		}
-		else if(encoder_reading_wheel < fullcounter-3)
+		else if(encoder_reading_wheel < 10 && encoder_reading_wheel>0 && direction_wheel == Back )
 		{
-			count = 1;
+			TIM4->CNT = fullcounter;
+			if(c == 0)
+			{
+				encoder_reading_wheel = -12;
+				encoder_wheel_state = 0;
+			}
+			else
+			{
+				c--;
+				encoder_reading_wheel = TIM4->CNT;
+			}
 		
 		}
-		encoder_reading_wheel = TIM4->CNT;
+		else
+		{
+			encoder_reading_wheel = TIM4->CNT;
+		}
 	}
 		
 	else
 	{
-			if((-encoder_reading_wheel) > fullcounter-3 && count == 1)
+		if((-encoder_reading_wheel) > fullcounter && direction_wheel == Back)
 		{
 			c--;
-			count = 0;
-		
+			TIM4->CNT = 10;
 		}
-		else if((-encoder_reading_wheel) < fullcounter-3)
+		else if( -encoder_reading_wheel < 10 && -encoder_reading_wheel>0 && direction_wheel == Front )
 		{
-			count = 1;
-		
+			c++;
+			TIM4->CNT = fullcounter;
 		}
-
-			encoder_reading_wheel = -(fullcounter - TIM4->CNT);
+		
+		encoder_reading_wheel = -(fullcounter - TIM4->CNT);
 	}
-	
-	total_distance = distance_travelled((c * fullcounter ) + encoder_reading_wheel );
-	encoder_reading_pre =TIM4->CNT;
-	
+		
+	encoder_reading_pre = TIM4->CNT;
   /* USER CODE END TIM4_IRQn 1 */
 }
 
