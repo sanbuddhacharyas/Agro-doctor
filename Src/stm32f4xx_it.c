@@ -211,6 +211,21 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+* @brief This function handles EXTI line[9:5] interrupts.
+*/
+void EXTI9_5_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+
+  /* USER CODE END EXTI9_5_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
+  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+	//HAL_GPIO_TogglePin(GPIOD ,GPIO_PIN_14);
+
+  /* USER CODE END EXTI9_5_IRQn 1 */
+}
+
+/**
 * @brief This function handles TIM3 global interrupt.
 */
 void TIM3_IRQHandler(void)
@@ -238,47 +253,42 @@ void TIM4_IRQHandler(void)
 	
 	total_encoder = c * fullcounter + (encoder_reading_wheel-10);
 	total_distance = distance_travelled( total_encoder);
+	
 	if(encoder_reading_pre < TIM4->CNT)
 		direction_wheel = Front;
 	else if(encoder_reading_pre > TIM4->CNT)
 		direction_wheel = Back;
-	
-	if(total_encoder > 0 )
-		encoder_wheel_state = 1;
-	else if(total_encoder < 0 )
-		encoder_wheel_state =0 ;
-	
-
-	if(encoder_wheel_state == 1)
+	/*
+	if(c == 0)
 	{
-	
+		if(encoder_reading_pre < 15 && encoder_reading_pre >10   && encoder_reading_pre < TIM4->CNT  )
+			encoder_wheel_state = 1;
+		
+		else if(encoder_reading_pre < (fullcounter) && encoder_reading_pre > (fullcounter -5) && encoder_reading_pre >TIM4->CNT)
+			encoder_wheel_state =0 ;
+		
+	}
+*/
+//	if(encoder_wheel_state == 1)
+//	{
 		if(encoder_reading_wheel > fullcounter && direction_wheel == Front)
 		{
 			c++;
 			TIM4->CNT =10;
-			encoder_reading_wheel = TIM4->CNT;
 		}
+		
 		else if(encoder_reading_wheel < 10 && encoder_reading_wheel>0 && direction_wheel == Back )
 		{
+			if(c!=0 )
+				c--;	
 			TIM4->CNT = fullcounter;
-			if(c == 0)
-			{
-				encoder_reading_wheel = -12;
-				encoder_wheel_state = 0;
-			}
-			else
-			{
-				c--;
-				encoder_reading_wheel = TIM4->CNT;
-			}
-		
+			
 		}
-		else
-		{
-			encoder_reading_wheel = TIM4->CNT;
-		}
-	}
+		encoder_reading_wheel = TIM4->CNT;
+	//}
 		
+	
+	/*
 	else
 	{
 		if((-encoder_reading_wheel) > fullcounter && direction_wheel == Back)
@@ -294,7 +304,7 @@ void TIM4_IRQHandler(void)
 		
 		encoder_reading_wheel = -(fullcounter - TIM4->CNT);
 	}
-		
+		*/
 	encoder_reading_pre = TIM4->CNT;
   /* USER CODE END TIM4_IRQn 1 */
 }

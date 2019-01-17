@@ -99,7 +99,7 @@ int fputc(int ch, FILE *f)
 	uint32_t encoder_wheel_state=0;
 	uint32_t reading_pre=0;
 	float angle;
-	float ds =0 ;
+	float ds =10 ;
 
 /* USER CODE END PV */
 
@@ -388,7 +388,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		{
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
 			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
-			htim2.Instance->CCR1 = (int)(_pid * (2800 / 1000));
+			htim2.Instance->CCR1 = (int)(-1*_pid * (2800 / 1000));
 			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 		}
 		else
@@ -400,6 +400,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}		
 	}
 }
+
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
@@ -419,6 +420,19 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				}
 				forward_speed = buff_sum;
 				//speed_memory= 100;
+
+				buff_sum =0;
+				range =0;
+			}
+			
+			 else if(uart_rx == 'f' )
+			{
+				for(int i=0;i<range;i++)
+				{
+					buff_sum = buff_sum*10 + receive_buffer[i];
+					
+				}
+				ds = buff_sum;
 
 				buff_sum =0;
 				range =0;

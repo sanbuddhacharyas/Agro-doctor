@@ -9,7 +9,11 @@ float	travel = 0;
 float angl=0;
 int pid_error;
 int PID;
-uint8_t p_scalar, i_scalar, d_scalar;
+float p_scalar =10, i_scalar =0.01, d_scalar=0;
+float integral = 0;
+float proportional=0;
+float previous_error = 0;
+float derivative = 0;
 
 extern volatile uint32_t encoder_reading_wheel;
 extern volatile uint32_t encoder_reading_left_right;
@@ -125,16 +129,15 @@ int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode)
 	 if(PID >10 || PID < -10)
 		 pid_error += PID * 0.015 ;
 
-	 float proportional = pid_error * p_scalar;//Proportional 
+	 proportional = pid_error * p_scalar;//Proportional 
 	
-	 static float integral = 0;
 	 integral += pid_error * i_scalar; // Intregal 
 	 if(integral >  wind_up) integral = wind_up; // limit wind-up
 	 if(integral < - wind_up) integral =-wind_up;
 
-	 static float previous_error = 0;
 	
-	 float derivative = (pid_error - previous_error) * d_scalar;// Derivative
+	
+	 derivative = (pid_error - previous_error) * d_scalar;// Derivative
 	 previous_error = pid_error;
 	 PID = proportional+derivative+integral; // Required PID
 	 if(PID > wind_up) PID = wind_up;
