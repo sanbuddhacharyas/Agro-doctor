@@ -9,7 +9,7 @@ float	travel = 0;
 float angl=0;
 int pid_error;
 int PID;
-float p_scalar =10, i_scalar =0.01, d_scalar=0;
+extern float p_scalar , i_scalar, d_scalar;
 float integral = 0;
 float proportional=0;
 float previous_error = 0;

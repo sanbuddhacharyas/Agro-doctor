@@ -75,7 +75,7 @@ int fputc(int ch, FILE *f)
 	int speed_counter=0;
 	volatile uint16_t encoder_reading_pre =0;
 	volatile int total_distance ;
-
+	 float p_scalar =10, i_scalar =0, d_scalar=0;
 
 
 
@@ -99,7 +99,7 @@ int fputc(int ch, FILE *f)
 	uint32_t encoder_wheel_state=0;
 	uint32_t reading_pre=0;
 	float angle;
-	float ds =10 ;
+	int ds = 0 ;
 
 /* USER CODE END PV */
 
@@ -410,7 +410,34 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	{
 	
 			receive = uart_rx - 48;
-		 
+			if(receive == 1)
+			{
+				p_scalar += 0.1;
+				
+			}
+			else if(receive == 2)
+			{
+				p_scalar = p_scalar - 0.1;
+			}
+			else if(receive == 3)
+			{
+				i_scalar += 0.001;
+				
+			}
+			
+			else if(receive == 4)
+			{
+				i_scalar -= 0.001;
+				
+			}
+			else if(receive == 5)
+			{
+				d_scalar += 0.1;
+			}
+			
+			else if(receive == 6)
+				d_scalar -= 0.1;
+		
 		  if(uart_rx == 's' )
 			{
 				for(int i=0;i<range;i++)

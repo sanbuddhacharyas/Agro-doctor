@@ -158,79 +158,59 @@
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>encoder_wheel_state,0x0A</ItemText>
+          <ItemText>encoder_reading_pre,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>encoder_reading_pre,0x0A</ItemText>
+          <ItemText>c,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>c,0x0A</ItemText>
+          <ItemText>total_distance,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>total_distance,0x0A</ItemText>
+          <ItemText>direction_wheel,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>direction_wheel,0x0A</ItemText>
+          <ItemText>total_encoder,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>total_encoder,0x0A</ItemText>
+          <ItemText>PID,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>PID,0x0A</ItemText>
+          <ItemText>ds,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>pid_error,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>9</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>integral</ItemText>
-        </Ww>
-        <Ww>
-          <count>10</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>proportional</ItemText>
-        </Ww>
-        <Ww>
-          <count>11</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>previous_error</ItemText>
-        </Ww>
-        <Ww>
-          <count>12</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>integral</ItemText>
+          <ItemText>forward_speed,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>encoder_reading_wheel,0x0A</ItemText>
+          <ItemText>p_scalar</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>direction_wheel,0x0A</ItemText>
+          <ItemText>i_scalar</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>angle</ItemText>
+          <ItemText>d_scalar</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>
