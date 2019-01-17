@@ -14,6 +14,7 @@ float integral = 0;
 float proportional=0;
 float previous_error = 0;
 float derivative = 0;
+float left_right_error =0;
 
 extern volatile uint32_t encoder_reading_wheel;
 extern volatile uint32_t encoder_reading_left_right;
@@ -87,33 +88,27 @@ void move(uint32_t distance, float velocity,int dir)
 
 void set_angle(float ang,uint8_t direction)
 {
-	if(direction == Right)
+	left_right_error = ang - left_right_angle();
+	if (left_right_error < 0.1 || left_right_error > -0.1)
+		left_right_error =0;
+	
+	if(left_right_error > 0 )
 	{
-		angl = left_right_angle();
-		while(ang > angl  )
-		{
-			angl = left_right_angle();
-			HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_SET);
-			throttel_left =  -70;
-			throttel_right = -70;	
-		}
+		throttel_left =  -70;
+		throttel_right = -70;	
 		
 	}
-
-	else if(direction == Left)
-	{	
-		angl = left_right_angle();
-		while(ang <  angl)
-		{
-			angl = left_right_angle();
-			HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_SET);
-			throttel_left = 70;
-			throttel_right = 70;
-		}
+	else if(left_right_error < 0)
+	{
+		throttel_left = 70;
+		throttel_right = 70;
 	}
-	throttel_left =  0;
-	throttel_right = 0;	
-	HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
+
+	else
+	{
+			throttel_left =  0;
+			throttel_right = 0;	
+	}
 }
 
 //Sets PID for required distance
@@ -143,7 +138,7 @@ int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode)
 	 if(PID > wind_up) PID = wind_up;
 	 if(PID <-wind_up)PID= -wind_up;
 	 
-	 if(PID < 5 && PID>-5) 
+	 if(PID < 35 && PID>-35) 
 		 PID =0;//Create a dead-band to stop the motors when the robot is balanced
 	
 		if(mode == 0)

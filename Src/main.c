@@ -43,8 +43,10 @@
 #include "usart.h"
 #include "gpio.h"
 
+
 /* USER CODE BEGIN Includes */
 #include "STEPPER.h"
+#include <string.h>
 
 /* USER CODE END Includes */
 
@@ -75,7 +77,7 @@ int fputc(int ch, FILE *f)
 	int speed_counter=0;
 	volatile uint16_t encoder_reading_pre =0;
 	volatile int total_distance ;
-	 float p_scalar =10, i_scalar =0, d_scalar=0;
+	 float p_scalar =15, i_scalar = 0, d_scalar=40;
 
 
 
@@ -100,6 +102,7 @@ int fputc(int ch, FILE *f)
 	uint32_t reading_pre=0;
 	float angle;
 	int ds = 0 ;
+	char str[30];
 
 /* USER CODE END PV */
 
@@ -169,7 +172,6 @@ int main(void)
   while (1)
   {
 		
-		
 		//displacement = distance_travelled(encoder_reading_wheel);
 	
 		/*
@@ -184,7 +186,7 @@ int main(void)
 		
 	//angle = left_right_angle();
 	//  set_angle(10, Right);
-		
+		/*
 		if(rec == 0)
 		{
 			throttel_left = 0;
@@ -266,7 +268,7 @@ int main(void)
 			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 			
 			}
-			
+			*/
 	
   /* USER CODE END WHILE */
 
@@ -376,19 +378,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if(htim->Instance == TIM6)
 	{
 		_pid = pid(ds, 1000, 0 );
-		
+	
 		if (_pid > 0 )
 		{
-			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_SET);
-			htim2.Instance->CCR1 = (int)(_pid * (2800 / 1000));
+			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
+			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
+			htim2.Instance->CCR1 = 600;
 			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 		}
 		else if (_pid < 0 )
 		{
-			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
-			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
-			htim2.Instance->CCR1 = (int)(-1*_pid * (2800 / 1000));
+			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_SET);
+			htim2.Instance->CCR1 = 600;
 			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 		}
 		else
@@ -398,6 +400,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 			
 		}		
+		
+		
 	}
 }
 
@@ -408,6 +412,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	
 	if(huart->Instance == USART2)
 	{
+		
+		
 	
 			receive = uart_rx - 48;
 			if(receive == 1)
@@ -418,17 +424,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			else if(receive == 2)
 			{
 				p_scalar = p_scalar - 0.1;
-			}
-			else if(receive == 3)
-			{
-				i_scalar += 0.001;
-				
-			}
-			
-			else if(receive == 4)
-			{
-				i_scalar -= 0.001;
-				
 			}
 			else if(receive == 5)
 			{
@@ -497,7 +492,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			  receive_buffer[range++] = receive;
 			}
 
-			  
 				HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
 	
 	}

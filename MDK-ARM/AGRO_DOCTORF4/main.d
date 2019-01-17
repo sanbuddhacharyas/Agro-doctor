@@ -34,3 +34,4 @@ agro_doctorf4\main.o: ../Inc/tim.h
 agro_doctorf4\main.o: ../Inc/usart.h
 agro_doctorf4\main.o: ../Inc/gpio.h
 agro_doctorf4\main.o: ../Inc/STEPPER.h
+agro_doctorf4\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

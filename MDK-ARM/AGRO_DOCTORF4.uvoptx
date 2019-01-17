@@ -193,7 +193,7 @@
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>forward_speed,0x0A</ItemText>
+          <ItemText>pid_error,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
