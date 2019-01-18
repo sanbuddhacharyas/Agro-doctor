@@ -1,8 +1,7 @@
 #include "STEPPER.h"
 #include <math.h>
 
-
-float linear_encoder_in_cm = 120 ;
+float linear_encoder_in_cm = 120;		//Resolution:120 lines per centimeters
 float radius =3;
 float wheel_size = 55.6;
 float	travel = 0;
@@ -15,7 +14,8 @@ float proportional=0;
 float previous_error = 0;
 float derivative = 0;
 float left_right_error =0;
-
+float test , test1;
+ 
 extern volatile uint32_t encoder_reading_wheel;
 extern volatile uint32_t encoder_reading_left_right;
 extern volatile uint8_t direction_wheel;
@@ -34,7 +34,7 @@ float distance_travelled(uint32_t encoder_reading_wheel)
 	
 }
 
-float left_right_angle()
+float left_right_angle() 
 {
 	if(encoder_reading_left_right >1000)
 	{
@@ -88,19 +88,21 @@ void move(uint32_t distance, float velocity,int dir)
 
 void set_angle(float ang,uint8_t direction)
 {
-	left_right_error = ang - left_right_angle();
-	if (left_right_error < 0.1 || left_right_error > -0.1)
+	test1 = ang;
+	test = left_right_angle();
+	left_right_error = ang - test;
+	if (left_right_error < 0.1 && left_right_error > -0.1)
 		left_right_error =0;
 	
 	if(left_right_error > 0 )
 	{
-		throttel_left =  -70;
+		throttel_left =  -70;				//motor will go towards right
 		throttel_right = -70;	
 		
 	}
 	else if(left_right_error < 0)
 	{
-		throttel_left = 70;
+		throttel_left = 70;			//motor will go toward left
 		throttel_right = 70;
 	}
 
@@ -109,7 +111,7 @@ void set_angle(float ang,uint8_t direction)
 			throttel_left =  0;
 			throttel_right = 0;	
 	}
-}
+} 
 
 //Sets PID for required distance
 /*
@@ -130,8 +132,6 @@ int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode)
 	 if(integral >  wind_up) integral = wind_up; // limit wind-up
 	 if(integral < - wind_up) integral =-wind_up;
 
-	
-	
 	 derivative = (pid_error - previous_error) * d_scalar;// Derivative
 	 previous_error = pid_error;
 	 PID = proportional+derivative+integral; // Required PID

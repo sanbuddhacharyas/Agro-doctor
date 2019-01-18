@@ -1,0 +1,42 @@
+/*********Timers************************/
+TIM2 - PWM for base motor (PA5)
+TIM3 - Timer for Stepper Refresher that runs in 20ms
+TIM4 - Encoder for base motor (Is running in both channel mode)
+TIM5 - Encoder for left_right stepper 
+TIM6 - Timer for PID refresher
+
+
+/*************USART**********/
+USART2_TX - PA2
+USART2_RX - PA3
+
+/*******H Bridge*****/
+IN1 - PC0
+IN2 - PC1
+
+OUT1 - Black Wire
+OUT2 - Red Wire
+
+
+/*****Encoders Wiring*******/
+/*Here the wire just after VCC is channel1 ,then channel2 and GND*/
+Encoder for base motor:
+Channel1 - PD13
+Channel2 - PD12
+
+Encoder for left_right_stepper:
+Channel1 - PA0
+Channel2 - PA1
+
+/*****Signals and Directions for Stepper********/
+For Left_Right Stepper:
+	Signal: PC2
+	Direction: PC3
+	
+Angle is positive while going right and is negative while going left
+But the encoder reads up from 0 while going left and decreases from overflow value while going right
+
+
+
+
+

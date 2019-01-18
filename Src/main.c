@@ -39,10 +39,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
+#include "i2c.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-
 
 /* USER CODE BEGIN Includes */
 #include "STEPPER.h"
@@ -79,8 +79,6 @@ int fputc(int ch, FILE *f)
 	volatile int total_distance ;
 	 float p_scalar =15, i_scalar = 0, d_scalar=40;
 
-
-
 	int receive_buffer[15] ={0};
 	int receive =0 ,rec=0;
 	int range =0;
@@ -101,7 +99,7 @@ int fputc(int ch, FILE *f)
 	uint32_t encoder_wheel_state=0;
 	uint32_t reading_pre=0;
 	float angle;
-	int ds = 0 ;
+	int ds = 0 ,my_angle = 0 ;
 	char str[30];
 
 /* USER CODE END PV */
@@ -149,6 +147,7 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM5_Init();
   MX_TIM6_Init();
+  MX_I2C1_Init();
 
   /* USER CODE BEGIN 2 */
 	HAL_TIM_Encoder_Start_IT(&htim4,TIM_CHANNEL_ALL);
@@ -172,8 +171,15 @@ int main(void)
   while (1)
   {
 		
+		//my_angle = left_right_angle();
+//		HAL_GPIO_WritePin(stepper_port,stepper1_dir,HIGH);
+		HAL_GPIO_WritePin(stepper_port,stepper1_sig,HIGH);
+		HAL_Delay(1);
+		HAL_GPIO_WritePin(stepper_port,stepper1_sig,LOW);
+		HAL_Delay(1);
+		
 		//displacement = distance_travelled(encoder_reading_wheel);
-	
+	//set_angle(30,Right);
 		/*
 		if(HAL_GetTick() - x >= dt)
 		{
@@ -183,10 +189,9 @@ int main(void)
 			printf("%f\n",omega);
 		}
 		*/
-		
 	//angle = left_right_angle();
 	//  set_angle(10, Right);
-		/*
+		
 		if(rec == 0)
 		{
 			throttel_left = 0;
@@ -228,8 +233,8 @@ int main(void)
 		else if(rec == 3)
 		{
 			
-			throttel_left =  65;
-			throttel_right = 65;
+			throttel_left =  70;
+			throttel_right = 70;
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 			
 		
@@ -237,8 +242,8 @@ int main(void)
 		else if(rec == 4)
 		{
 			
-			throttel_left = -66;
-			throttel_right = -66;
+			throttel_left = -70;
+			throttel_right = -70;
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 		
 		}
@@ -259,7 +264,6 @@ int main(void)
 		//Moving left with curvy step
 		else if(rec == 5)
 		{
-			
 			throttel_left = -70 ;
 			throttel_right = -70 ;
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
@@ -268,7 +272,6 @@ int main(void)
 			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 			
 			}
-			*/
 	
   /* USER CODE END WHILE */
 
@@ -337,7 +340,6 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-		
 	if(htim->Instance == TIM3)
 	{
 		//HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
@@ -400,21 +402,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 			
 		}		
-		
+		set_angle(my_angle,NULL);
 		
 	}
 }
 
-
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	
 	
 	if(huart->Instance == USART2)
 	{
 		
-		
-	
 			receive = uart_rx - 48;
 			if(receive == 1)
 			{
@@ -455,6 +453,32 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 					
 				}
 				ds = buff_sum;
+
+				buff_sum =0;
+				range =0;
+			}
+			
+			 else if(uart_rx == 'x' )
+			{
+				for(int i=0;i<range;i++)
+				{
+					buff_sum = buff_sum*10 + receive_buffer[i];
+					
+				}
+				my_angle = buff_sum;
+
+				buff_sum =0;
+				range =0;
+			}
+			
+			 else if(uart_rx == 'y' )
+			{
+				for(int i=0;i<range;i++)
+				{
+					buff_sum = buff_sum*10 + receive_buffer[i];
+					
+				}
+				my_angle = (-1) * buff_sum;
 
 				buff_sum =0;
 				range =0;
