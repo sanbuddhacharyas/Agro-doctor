@@ -28,8 +28,18 @@ void set_angle(float angle,uint8_t direction);
 int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode);
 
 typedef struct {
-	int Signal
-	int Direction
+	uint8_t Signal;
+	uint8_t Direction;
+	float pid_error;
+	float i_scalar;
+	float p_scalar;
+	float d_scalar;
+	float motor;
+	float pid;
+	int  throttel;
+	int throttel_counter;
+	int throttel_previous_memory;
+	int throttel_previous_step;
 	} STEPPER;
 
 #endif

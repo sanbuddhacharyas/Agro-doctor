@@ -43,6 +43,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "mpu6050.h"
 
 /* USER CODE BEGIN Includes */
 #include "STEPPER.h"
