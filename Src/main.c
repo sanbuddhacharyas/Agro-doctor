@@ -43,15 +43,21 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "mpu6050.h"
+
 
 /* USER CODE BEGIN Includes */
 #include "STEPPER.h"
-#include <string.h>
+#include "string.h"
+#include "mpu6050.h"
+
+#define mpu1_address 0xD0
+#define mpu2_address 0xD2
+#define mpu3_address 0xD0
 
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+MPU6050 MPU1 = {mpu1_address , &hi2c1);
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/

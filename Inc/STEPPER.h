@@ -34,6 +34,10 @@ typedef struct {
 	float i_scalar;
 	float p_scalar;
 	float d_scalar;
+	float integral;
+	float derivative;
+	float proportional;
+	float previous_error;
 	float motor;
 	float pid;
 	int  throttel;
