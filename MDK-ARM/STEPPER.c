@@ -26,7 +26,6 @@ extern volatile int throttel_left, throttel_right;
 extern volatile uint16_t encoder_reading_pre;
 extern volatile int total_distance ;
 
-
 float distance_travelled(uint32_t encoder_reading_wheel)
 {
 	
@@ -44,12 +43,10 @@ float left_right_angle()
 	{
 		return -(asin(encoder_reading_left_right/ (radius * linear_encoder_in_cm)) * 57.2957795);
 	}
-	
 }
 
 void move(uint32_t distance, float velocity,int dir)
 {
-	
 	if(dir == Front)
 	{
 		while(distance > encoder_reading_wheel )

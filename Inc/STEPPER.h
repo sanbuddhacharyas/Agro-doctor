@@ -27,5 +27,10 @@ void move(uint32_t distance, float velocity,int direction);
 void set_angle(float angle,uint8_t direction);
 int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode);
 
+typedef struct {
+	int Signal
+	int Direction
+	} STEPPER;
+
 #endif
 

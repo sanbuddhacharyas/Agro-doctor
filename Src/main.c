@@ -161,8 +161,7 @@ int main(void)
 	encoder_reading_pre =11;
 	direction_left_right =0 ;
 	TIM5->CNT = 0;
-
-
+	
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -170,14 +169,11 @@ int main(void)
 	
   while (1)
   {
+		//sprintf(buffer,"Hello/r/n");
+		//HAL_UART_Transmit(&huart2,(uint8_t*)&d,sizeof(d),0xFFFF);
 		
 		//my_angle = left_right_angle();
 //		HAL_GPIO_WritePin(stepper_port,stepper1_dir,HIGH);
-		HAL_GPIO_WritePin(stepper_port,stepper1_sig,HIGH);
-		HAL_Delay(1);
-		HAL_GPIO_WritePin(stepper_port,stepper1_sig,LOW);
-		HAL_Delay(1);
-		
 		//displacement = distance_travelled(encoder_reading_wheel);
 	//set_angle(30,Right);
 		/*
@@ -202,7 +198,6 @@ int main(void)
 		
 		}
 		
-		
 		 else if(rec == 1)
 		{
 				ds  = 40;
@@ -215,8 +210,6 @@ int main(void)
 				//encoder_reading_wheel = 0;
 				//encoder_reading_pre =0;
 				//move(3000, 20 ,Front);
-			
-			
 		}
 		
 			
@@ -226,40 +219,32 @@ int main(void)
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
 			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
 			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-			
 		}	
 		
 		//turning left
 		else if(rec == 3)
 		{
-			
 			throttel_left =  70;
 			throttel_right = 70;
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
-			
-		
 		}
 		else if(rec == 4)
 		{
-			
 			throttel_left = -70;
 			throttel_right = -70;
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
-		
 		}
 		
 		
 		//Moving right with curvy step
 		else if(rec == 6)
 		{
-			
 			throttel_left = 60 ;
 			throttel_right = 60; 
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
 			HAL_GPIO_WritePin(sig_port,sig2,GPIO_PIN_RESET);
 			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
 			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-			 
 		}
 		//Moving left with curvy step
 		else if(rec == 5)
@@ -402,7 +387,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 			
 		}		
-		set_angle(my_angle,NULL);
+		//set_angle(my_angle,NULL);
 		
 	}
 }
@@ -450,7 +435,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				for(int i=0;i<range;i++)
 				{
 					buff_sum = buff_sum*10 + receive_buffer[i];
-					
 				}
 				ds = buff_sum;
 
