@@ -44,3 +44,4 @@ agro_doctorf4\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 agro_doctorf4\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 agro_doctorf4\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
 agro_doctorf4\main.o: ..\MDK-ARM\MPU_RES_defines.h
+agro_doctorf4\main.o: ..\MDK-ARM\PID.h

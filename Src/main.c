@@ -49,17 +49,20 @@
 #include "STEPPER.h"
 #include "string.h"
 #include "mpu6050.h"
+#include "PID.h"
 
-#define mpu1_address 0xD0
-#define mpu2_address 0xD2
+#define mpu1_address 0xD2
+#define mpu2_address 0xD0
 #define mpu3_address 0xD0
 
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-MPU6050 MPU1 = {mpu1_address , &hi2c1);
-
 /* USER CODE BEGIN PV */
+MPU6050 MPU1 = {mpu1_address , &hi2c1};
+MPU6050 MPU2 = {mpu2_address , &hi2c1};
+STEPPER MOTOR_1 = {stepper1_sig,stepper1_dir};
+STEPPER MOTOR_2 = {stepper2_sig,stepper2_dir};
 /* Private variables ---------------------------------------------------------*/
 
 struct __FILE{
@@ -174,8 +177,14 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	
+	MPU6050_Initialize(&MPU1);
+	MPU_GYRO_CAL_Y(&MPU1);
+	 
+	
   while (1)
   {
+		MPU_GET_VALUE(&MPU1);
+		PID_calculate(&MPU1,&MOTOR_1,45);
 		//sprintf(buffer,"Hello/r/n");
 		//HAL_UART_Transmit(&huart2,(uint8_t*)&d,sizeof(d),0xFFFF);
 		
@@ -195,7 +204,7 @@ int main(void)
 	//angle = left_right_angle();
 	//  set_angle(10, Right);
 		
-		if(rec == 0)
+	/*	if(rec == 0)
 		{
 			throttel_left = 0;
 			throttel_right = 0;
@@ -263,7 +272,7 @@ int main(void)
 			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
 			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 			
-			}
+			}*/
 	
   /* USER CODE END WHILE */
 

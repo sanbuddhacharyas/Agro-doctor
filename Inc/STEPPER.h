@@ -28,8 +28,8 @@ void set_angle(float angle,uint8_t direction);
 int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode);
 
 typedef struct {
-	uint8_t Signal;
-	uint8_t Direction;
+	uint16_t Signal;
+	uint16_t Direction;
 	float pid_error;
 	float i_scalar;
 	float p_scalar;
