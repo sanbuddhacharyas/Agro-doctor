@@ -104,9 +104,8 @@ void MPU_GET_VALUE(MPU6050* Datastruct)
 	Datastruct->Accelerometer_Z = Datastruct->Accelerometer_Z/16384;
 	 
 	Datastruct->Gyroscope_X =  Datastruct->Gyroscope_X/131;
-	Datastruct->Gyroscope_Y = ( Datastruct->Gyroscope_Y - 	Datastruct->Gyro_Cal_Y ) /131;
+	Datastruct->Gyroscope_Y = ( Datastruct->Gyroscope_Y ) /131;
 	Datastruct->Gyroscope_Z =  Datastruct->Gyroscope_Z/131;
-     
 }
 
 void MPU_GYRO_CAL_Y(MPU6050* Datastruct)

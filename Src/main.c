@@ -111,6 +111,7 @@ int fputc(int ch, FILE *f)
 	float angle;
 	int ds = 0 ,my_angle = 0 ;
 	char str[30];
+	char tx_data[100];
 
 /* USER CODE END PV */
 
@@ -172,22 +173,22 @@ int main(void)
 	direction_left_right =0 ;
 	TIM5->CNT = 0;
 	
+	MOTOR_1.p_scalar = 8;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	
 	MPU6050_Initialize(&MPU1);
-	MPU_GYRO_CAL_Y(&MPU1);
-	 
+	//MPU_GYRO_CAL_Y(&MPU1);
 	
   while (1)
   {
-		MPU_GET_VALUE(&MPU1);
-		PID_calculate(&MPU1,&MOTOR_1,45);
-		//sprintf(buffer,"Hello/r/n");
-		//HAL_UART_Transmit(&huart2,(uint8_t*)&d,sizeof(d),0xFFFF);
+		//MPU_GET_VALUE(&MPU1);
+		PID_calculate(&MPU1,&MOTOR_1,40);
 		
+		sprintf(tx_data,"Angle");
+		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
 		//my_angle = left_right_angle();
 //		HAL_GPIO_WritePin(stepper_port,stepper1_dir,HIGH);
 		//displacement = distance_travelled(encoder_reading_wheel);
@@ -345,7 +346,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	{
 		//HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
 			
-		throttel_left_counter ++;                                        //Increase the throttel_left_counter variable by 1 every time this routine is executed
+		/*throttel_left_counter ++;                                        //Increase the throttel_left_counter variable by 1 every time this routine is executed
 		if(throttel_left_counter > throttel_previous_memory )
 		{             //If the number of loops is larger then the throttel_previous_memory variable
 				
@@ -374,7 +375,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 		else if(throttle_counter_right_motor == 1)HAL_GPIO_WritePin(stepper_port,  stepper2_sig , HIGH);             //Set output 4 high to create a pulse for the stepper controller
 		else if(throttle_counter_right_motor == 2)HAL_GPIO_WritePin(stepper_port,  stepper2_sig , LOW);           //Set output 4 low because the pulse only has to last for 20us
-		
+		*/
+		Pulse_Width_Calculator(&MOTOR_1);
 	}
 
 	//PID For motor
