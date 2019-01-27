@@ -31,6 +31,7 @@ typedef struct {
 	uint16_t Signal;
 	uint16_t Direction;
 	float pid_error;
+	int setpoint;
 	float i_scalar;
 	float p_scalar;
 	float d_scalar;

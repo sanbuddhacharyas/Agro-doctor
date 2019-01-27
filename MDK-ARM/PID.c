@@ -4,6 +4,7 @@
 
 void PID_calculate(MPU6050* Datastruct,STEPPER* INFO ,int pid_setpoint)
 	{
+		INFO->setpoint = pid_setpoint;
 		INFO->pid_error = (Datastruct->Angle)-pid_setpoint;
 	  INFO->proportional = INFO->pid_error * INFO->p_scalar;
 		//INFO->integral = 0;
@@ -15,7 +16,7 @@ void PID_calculate(MPU6050* Datastruct,STEPPER* INFO ,int pid_setpoint)
 		INFO->pid = INFO->proportional+INFO->derivative+INFO->integral;
 		if(INFO->pid > 400) INFO->pid = 400;
 		if(INFO->pid < -400)INFO->pid = -400;
-	    if(INFO->pid <5 && INFO->pid>-5) INFO->pid =0;                                   //Create a dead-band to stop the motors when the robot is balanced
+	    if(INFO->pid <10 && INFO->pid>-10) INFO->pid =0;                                   //Create a dead-band to stop the motors when the robot is balanced
 		if(INFO->pid > 0)INFO->pid = 405 - (1/(INFO->pid + 9)) * 5500;
 		else if(INFO->pid<0) INFO->pid= -405 - (1/(INFO->pid- 9)) * 5500;
 		if(INFO->pid > 0)INFO->motor = 400 - INFO->pid;                                  //Calculate the needed pulse time for `stepper motor controllers
