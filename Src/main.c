@@ -62,7 +62,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-MPU6050 MPU1 = {mpu1_address , &hi2c2};
+MPU6050 MPU1 = {mpu2_address , &hi2c2};
 //MPU6050 MPU2 = {mpu2_address , &hi2c2};
 STEPPER MOTOR_1 = {stepper1_sig,stepper1_dir};
 STEPPER MOTOR_2 = {stepper2_sig,stepper2_dir};
@@ -198,7 +198,7 @@ int main(void)
   {
 		//MPU_GET_VALUE(&MPU1);
 		checker = MPU1.Angle;
-		//PID_calculate(&MPU1,&MOTOR_1,setting);
+	PID_calculate(&MPU1,&MOTOR_1,setting);
 		
 		sprintf(tx_data,"Angle: %f , Setpoint: %d , error: %f , throttel: %d\r\n",MPU1.Angle , MOTOR_1.setpoint,MOTOR_1.pid_error , MOTOR_1.throttel);
 		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
@@ -219,7 +219,7 @@ int main(void)
 	//angle = left_right_angle();
 	//  set_angle(10, Right);
 		
-		/*if(rec == 0)
+	/*	if(rec == 0)
 		{
 			throttel_left = 0;
 			throttel_right = 0;
@@ -255,14 +255,14 @@ int main(void)
 		//turning left
 		else if(rec == 3)
 		{
-			throttel_left =  70;
-			throttel_right = 70;
+			throttel_left =  30;
+			throttel_right = 30;
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 		}
 		else if(rec == 4)
 		{
-			throttel_left = -70;
-			throttel_right = -70;
+			throttel_left = -30;
+			throttel_right = -30;
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 		}
 		
@@ -287,8 +287,8 @@ int main(void)
 			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
 			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 			
-			}*/
-	
+			}
+	*/
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
@@ -360,7 +360,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	{
 		//HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
 			
-	/*	throttel_left_counter ++;                                        //Increase the throttel_left_counter variable by 1 every time this routine is executed
+		/*throttel_left_counter ++;                                        //Increase the throttel_left_counter variable by 1 every time this routine is executed
 		if(throttel_left_counter > throttel_previous_memory )
 		{             //If the number of loops is larger then the throttel_previous_memory variable
 				
