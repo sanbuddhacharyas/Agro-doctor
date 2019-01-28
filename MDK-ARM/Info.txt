@@ -1,10 +1,10 @@
 /*********Timers************************/
+TIM1 - Angle Calculations
 TIM2 - PWM for base motor (PA5)
 TIM3 - Timer for Stepper Refresher that runs in 20ms
 TIM4 - Encoder for base motor (Is running in both channel mode)
 TIM5 - Encoder for left_right stepper 
 TIM6 - Timer for PID refresher
-
 
 /*************USART**********/
 USART2_TX - PA2

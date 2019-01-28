@@ -38,21 +38,34 @@
 /* USER CODE BEGIN 0 */
 #include "STEPPER.h"
 #include <math.h>
+
+#define TRUE 1
+#define FALSE 0
 extern volatile int32_t encoder_reading_wheel;
 extern volatile uint32_t encoder_reading_left_right;
 extern volatile uint8_t direction_wheel;
 extern volatile uint8_t direction_left_right;
+extern int setting;
 uint8_t count=1,count1=1;
 extern uint32_t encoder_wheel_state;
+extern int throttel_left;
 uint8_t direction_prev=1;
 extern volatile uint16_t encoder_reading_pre;
 uint16_t encoder_5_times =0 ;
 int total_encoder;
 int c;
 extern volatile int total_distance ;
+int calibrated = 0;
+int32_t previous_count = 5000 , new_count = 0, current_encoder_reading = 0;
+float current_angle = 0 ,difference = 0 ;
+int CURRENT_ROTATION ;
 
 //uint32_t encoder_reading_wheel_prev;
 //uint32_t encoder_reading_left_right_prev;
+
+#define  ANTI_CLOCKWISE 1
+#define CLOCKWISE 0
+#define TRUE 1
 
 
 extern TIM_HandleTypeDef htim3;
@@ -221,8 +234,21 @@ void EXTI9_5_IRQHandler(void)
   /* USER CODE END EXTI9_5_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
-	//HAL_GPIO_TogglePin(GPIOD ,GPIO_PIN_14);
 
+	if(calibrated != TRUE)
+	{
+		throttel_left = 0;
+		HAL_GPIO_TogglePin(GPIOD ,GPIO_PIN_14);
+		calibrated = TRUE;
+		setting = 0;		//Go to home position
+		current_encoder_reading = 0;
+		while(current_encoder_reading <= 777)
+		{
+			throttel_left = 10;
+		}
+		//throttel_left = 10;
+	}
+	
   /* USER CODE END EXTI9_5_IRQn 1 */
 }
 
@@ -279,14 +305,32 @@ void TIM4_IRQHandler(void)
   HAL_TIM_IRQHandler(&htim4);
   /* USER CODE BEGIN TIM4_IRQn 1 */
 	//encoder_reading_wheel = TIM4->CNT;
+	/**************MY_CODE**************/
+	new_count = TIM4->CNT;
+	if(new_count > previous_count)		//This count was made 10000 (where overflow was 20000) while interrupt occured
+	{
+		CURRENT_ROTATION = ANTI_CLOCKWISE;
+	}
+	if(new_count < previous_count)
+	{
+		CURRENT_ROTATION = CLOCKWISE;
+	}
+	difference = new_count - previous_count;
+	current_encoder_reading += difference;
+	current_angle += (difference/24);
+	//current_angle = difference / 24;
+	previous_count = new_count;
 	
-	total_encoder = c * fullcounter + (encoder_reading_wheel-10);
+	
+	/**************MY_CODE**************/
+	
+	/*total_encoder = c * fullcounter + (encoder_reading_wheel-10);
 	total_distance = distance_travelled( total_encoder);
 	
 	if(encoder_reading_pre < TIM4->CNT)
 		direction_wheel = Front;
 	else if(encoder_reading_pre > TIM4->CNT)
-		direction_wheel = Back;
+		direction_wheel = Back;*/
 	/*
 	if(c == 0)
 	{
@@ -300,7 +344,7 @@ void TIM4_IRQHandler(void)
 */
 //	if(encoder_wheel_state == 1)
 //	{
-		if(encoder_reading_wheel > fullcounter && direction_wheel == Front)
+	/*	if(encoder_reading_wheel > fullcounter && direction_wheel == Front)
 		{
 			c++;
 			TIM4->CNT =10;
@@ -312,7 +356,7 @@ void TIM4_IRQHandler(void)
 				c--;	
 			TIM4->CNT = fullcounter;
 			
-		}
+		}*/
 		encoder_reading_wheel = TIM4->CNT;
 	//}
 	/*

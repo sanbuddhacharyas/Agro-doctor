@@ -118,7 +118,13 @@ int fputc(int ch, FILE *f)
 	char str[30];
 	char tx_data[100];
 	float checker;
-	int setting = 40;
+	int setting = 0;
+	extern float current_angle;
+	extern int calibrated;
+	
+	#define TRUE 1
+	
+	
 
 /* USER CODE END PV */
 
@@ -136,7 +142,6 @@ void SystemClock_Config(void);
 
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
 	
   /* USER CODE END 1 */
@@ -169,17 +174,17 @@ int main(void)
   MX_I2C2_Init();
 
   /* USER CODE BEGIN 2 */
-	//HAL_TIM_Encoder_Start_IT(&htim4,TIM_CHANNEL_ALL);
-	//HAL_TIM_Encoder_Start_IT(&htim5,TIM_CHANNEL_2);
+	HAL_TIM_Encoder_Start_IT(&htim4,TIM_CHANNEL_ALL);
+	//HAL_TIM_Encoder_Start_IT(&htim5,TIM_CHANNEL_ALL);
 	//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 	HAL_TIM_Base_Start_IT(&htim3);
-	//HAL_TIM_Base_Start_IT(&htim6);
-	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
-	TIM4->CNT = 11;
-	encoder_reading_wheel = 11;
-	encoder_reading_pre =11;
-	direction_left_right =0 ;
-	TIM5->CNT = 0;
+	HAL_TIM_Base_Start_IT(&htim6);
+//	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
+//	TIM4->CNT = 11;
+//	encoder_reading_wheel = 11;
+//	encoder_reading_pre =11;
+//	direction_left_right =0 ;
+	TIM4->CNT = 5000;
 	
 	MOTOR_1.p_scalar = 30;
 	MOTOR_1.i_scalar = 0;
@@ -188,21 +193,30 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	HAL_Delay(100);
-	MPU6050_Initialize(&MPU1);
-		HAL_TIM_Base_Start_IT(&htim1);
-		TIM1->CNT = 0;
+	HAL_Delay(1000);
+	//MPU6050_Initialize(&MPU1);
+		//HAL_TIM_Base_Start_IT(&htim1);
+		//TIM1->CNT = 0;
 	//MPU_GYRO_CAL_Y(&MPU1);
-	
+	//Calibrate_Base();
+	throttel_left = -10;
   while (1)
   {
-		//MPU_GET_VALUE(&MPU1);
-		checker = MPU1.Angle;
-	PID_calculate(&MPU1,&MOTOR_1,setting);
 		
-		sprintf(tx_data,"Angle: %f , Setpoint: %d , error: %f , throttel: %d\r\n",MPU1.Angle , MOTOR_1.setpoint,MOTOR_1.pid_error , MOTOR_1.throttel);
-		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
-		HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
+			if(calibrated == TRUE)
+		{
+			set_rotor_angle(setting);
+		}
+		//set_rotor_angle(20);
+		//MPU_GET_VALUE(&MPU1);
+//		checker = MPU1.Angle;
+//	PID_calculate(&MPU1,&MOTOR_1,setting);
+		//sprintf(tx_data,"Angle: %f ,, throttel_left: %d\r\n",current_angle , throttel_left);
+		//HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
+	//	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
+//		sprintf(tx_data,"Angle: %f , Setpoint: %d , error: %f , throttel: %d\r\n",MPU1.Angle , MOTOR_1.setpoint,MOTOR_1.pid_error , MOTOR_1.throttel);
+//		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
+//		HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
 		//my_angle = left_right_angle();
 //		HAL_GPIO_WritePin(stepper_port,stepper1_dir,HIGH);
 		//displacement = distance_travelled(encoder_reading_wheel);
@@ -294,9 +308,8 @@ int main(void)
   /* USER CODE BEGIN 3 */
 
   }
-  /* USER CODE END 3 */
-
 }
+  /* USER CODE END 3 */
 
 /** System Clock Configuration
 */
@@ -360,7 +373,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	{
 		//HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
 			
-		/*throttel_left_counter ++;                                        //Increase the throttel_left_counter variable by 1 every time this routine is executed
+		
+		throttel_left_counter ++;                                        //Increase the throttel_left_counter variable by 1 every time this routine is executed
 		if(throttel_left_counter > throttel_previous_memory )
 		{             //If the number of loops is larger then the throttel_previous_memory variable
 				
@@ -389,14 +403,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 		else if(throttle_counter_right_motor == 1)HAL_GPIO_WritePin(stepper_port,  stepper2_sig , HIGH);             //Set output 4 high to create a pulse for the stepper controller
 		else if(throttle_counter_right_motor == 2)HAL_GPIO_WritePin(stepper_port,  stepper2_sig , LOW);           //Set output 4 low because the pulse only has to last for 20us
-		*/
-		Pulse_Width_Calculator(&MOTOR_1);
+		
+		//Pulse_Width_Calculator(&MOTOR_1);
 	}
 
 	//PID For motor
 	if(htim->Instance == TIM6)
 	{
-		_pid = pid(ds, 1000, 0 );
+		//	set_rotor_angle(5);
+		/*_pid = pid(ds, 1000, 0 );
 	
 		if (_pid > 0 )
 		{
@@ -418,7 +433,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 			
-		}		
+		}		*/
 		//set_angle(my_angle,NULL);
 		
 	}

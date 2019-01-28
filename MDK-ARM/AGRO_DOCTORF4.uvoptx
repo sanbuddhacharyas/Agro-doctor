@@ -198,7 +198,7 @@
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>encoder_reading_left_right,0x0A</ItemText>
+          <ItemText>my_angle,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
@@ -208,32 +208,62 @@
         <Ww>
           <count>11</count>
           <WinNumber>1</WinNumber>
-          <ItemText>my_angle,0x0A</ItemText>
+          <ItemText>left_right_error</ItemText>
         </Ww>
         <Ww>
           <count>12</count>
           <WinNumber>1</WinNumber>
-          <ItemText>left_right_error</ItemText>
+          <ItemText>throttel_left,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>13</count>
           <WinNumber>1</WinNumber>
-          <ItemText>throttel_left,0x0A</ItemText>
+          <ItemText>test</ItemText>
         </Ww>
         <Ww>
           <count>14</count>
           <WinNumber>1</WinNumber>
-          <ItemText>test</ItemText>
+          <ItemText>rec,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>15</count>
           <WinNumber>1</WinNumber>
-          <ItemText>rec,0x0A</ItemText>
+          <ItemText>encoder_reading_left_right,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>16</count>
           <WinNumber>1</WinNumber>
-          <ItemText>checker</ItemText>
+          <ItemText>desired_position,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>17</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\AGRO_DOCTORF4\../Src/main.c\direction_wheel</ItemText>
+        </Ww>
+        <Ww>
+          <count>18</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\AGRO_DOCTORF4\../Src/main.c\direction_wheel</ItemText>
+        </Ww>
+        <Ww>
+          <count>19</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\AGRO_DOCTORF4\../Src/main.c\direction_wheel</ItemText>
+        </Ww>
+        <Ww>
+          <count>20</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\AGRO_DOCTORF4\../Src/main.c\direction_wheel</ItemText>
+        </Ww>
+        <Ww>
+          <count>21</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\AGRO_DOCTORF4\../Src/main.c\direction_wheel</ItemText>
+        </Ww>
+        <Ww>
+          <count>22</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>setting,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

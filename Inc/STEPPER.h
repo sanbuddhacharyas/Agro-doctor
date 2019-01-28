@@ -26,6 +26,9 @@ float distance_travelled(uint32_t encoder_reading_wheel);
 void move(uint32_t distance, float velocity,int direction);
 void set_angle(float angle,uint8_t direction);
 int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode);
+void set_rotor_angle(int ang);
+float initial_angle();
+void Calibrate_Base(void);
 
 typedef struct {
 	uint16_t Signal;

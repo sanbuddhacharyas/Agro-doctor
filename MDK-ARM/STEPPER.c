@@ -1,13 +1,15 @@
 #include "STEPPER.h"
-#include <math.h>
+#include "math.h"
+#include <stdio.h>
 
+#define SCALE 24
 float linear_encoder_in_cm = 120;		//Resolution:120 lines per centimeters
 float radius =3;
 float wheel_size = 55.6;
 float	travel = 0;
 float angl=0;
 int pid_error;
-int PID;
+int PID , desired_position;
 extern float p_scalar , i_scalar, d_scalar;
 float integral = 0;
 float proportional=0;
@@ -15,7 +17,7 @@ float previous_error = 0;
 float derivative = 0;
 float left_right_error =0;
 float test , test1;
- 
+
 extern volatile uint32_t encoder_reading_wheel;
 extern volatile uint32_t encoder_reading_left_right;
 extern volatile uint8_t direction_wheel;
@@ -25,6 +27,8 @@ extern volatile float velocity;
 extern volatile int throttel_left, throttel_right;
 extern volatile uint16_t encoder_reading_pre;
 extern volatile int total_distance ;
+extern float current_angle;
+int input = 0;
 
 float distance_travelled(uint32_t encoder_reading_wheel)
 {
@@ -143,4 +147,49 @@ int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode)
 		else 
 			return 0;
 }
+
+float initial_angle()
+{
+	float ang;
+	//if(direction_left_right == Right)
+	//else
+		//ang = -((10000 - encoder_reading_wheel)/24);
+	
+	return ((encoder_reading_wheel/24));
+}
+	
+/*void set_rotor_angle(int ang)
+{
+	desired_position = ang* SCALE;
+	while(desired_position > encoder_reading_wheel)
+	{
+		throttel_left = 30;
+	}
+	throttel_left = 0;
+}
+*/ 
+void set_rotor_angle(int input_angle)
+{
+	int angle = current_angle;
+	input = input_angle;
+	if(fabs((float)input_angle - angle) > 1)
+	{
+		if(input_angle > angle)
+		throttel_left =10;
+	else
+		throttel_left = -10;
+		
+	}
+	else
+		throttel_left = 0;
+	
+}
+
+void Calibrate_Base(void)
+{
+	throttel_left = -10;
+}
+
+/*   After calibration, make the initial value as 5000.
+Calculate present position i.e. current angle everytime in f4xx_it.c by taking the difference of latest counts.*/
 
