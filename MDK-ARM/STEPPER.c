@@ -172,7 +172,7 @@ void set_rotor_angle(int input_angle)
 {
 	int angle = current_angle;
 	input = input_angle;
-	if(fabs((float)input_angle - angle) > 1)
+	if(fabs((float)input_angle - angle) > 0.1)
 	{
 		if(input_angle > angle)
 		throttel_left =10;

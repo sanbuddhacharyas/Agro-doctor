@@ -121,9 +121,10 @@ int fputc(int ch, FILE *f)
 	int setting = 0;
 	extern float current_angle;
 	extern int calibrated;
-	
+	extern int current_encoder_reading;
 	#define TRUE 1
 	
+	#define CALIBRATING 3
 	
 
 /* USER CODE END PV */
@@ -202,11 +203,6 @@ int main(void)
 	throttel_left = -10;
   while (1)
   {
-		
-			if(calibrated == TRUE)
-		{
-			set_rotor_angle(setting);
-		}
 		//set_rotor_angle(20);
 		//MPU_GET_VALUE(&MPU1);
 //		checker = MPU1.Angle;
@@ -372,7 +368,24 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if(htim->Instance == TIM3)
 	{
 		//HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
+		if(calibrated == CALIBRATING)
+		{
+			set_rotor_angle(setting);
+			if(current_angle >=31)
+			{
+				current_angle = 0;
+				setting = 0;
+				calibrated = TRUE;
+			}
+		}
+		else if (calibrated == TRUE)
+			set_rotor_angle(setting);
 			
+			
+//			if(calibrated == TRUE )
+//		{
+//			set_rotor_angle(setting);
+//		}
 		
 		throttel_left_counter ++;                                        //Increase the throttel_left_counter variable by 1 every time this routine is executed
 		if(throttel_left_counter > throttel_previous_memory )

@@ -59,6 +59,7 @@ int calibrated = 0;
 int32_t previous_count = 5000 , new_count = 0, current_encoder_reading = 0;
 float current_angle = 0 ,difference = 0 ;
 int CURRENT_ROTATION ;
+int calibrating;
 
 //uint32_t encoder_reading_wheel_prev;
 //uint32_t encoder_reading_left_right_prev;
@@ -66,7 +67,7 @@ int CURRENT_ROTATION ;
 #define  ANTI_CLOCKWISE 1
 #define CLOCKWISE 0
 #define TRUE 1
-
+#define CALIBRATING 3
 
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
@@ -238,17 +239,18 @@ void EXTI9_5_IRQHandler(void)
 	if(calibrated != TRUE)
 	{
 		throttel_left = 0;
+		setting = 0;
 		HAL_GPIO_TogglePin(GPIOD ,GPIO_PIN_14);
-		calibrated = TRUE;
-		setting = 0;		//Go to home position
-		current_encoder_reading = 0;
-		while(current_encoder_reading <= 777)
-		{
-			throttel_left = 10;
-		}
-		//throttel_left = 10;
+		calibrated = CALIBRATING;
+		current_angle = 0;
+		setting = 32;		//Go to home position
+		//current_encoder_reading = 0;
+//		while(current_encoder_reading <= 777)
+//		{
+//			throttel_left = 10;
+//		}
+		throttel_left = 10;
 	}
-	
   /* USER CODE END EXTI9_5_IRQn 1 */
 }
 
