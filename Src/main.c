@@ -62,10 +62,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-MPU6050 MPU1 = {mpu2_address , &hi2c2};
-//MPU6050 MPU2 = {mpu2_address , &hi2c2};
-STEPPER MOTOR_1 = {stepper1_sig,stepper1_dir};
-STEPPER MOTOR_2 = {stepper2_sig,stepper2_dir};
+
 /* Private variables ---------------------------------------------------------*/
 
 struct __FILE{
@@ -185,11 +182,7 @@ int main(void)
 //	encoder_reading_wheel = 11;
 //	encoder_reading_pre =11;
 //	direction_left_right =0 ;
-	TIM4->CNT = 5000;
-	
-	MOTOR_1.p_scalar = 30;
-	MOTOR_1.i_scalar = 0;
-	MOTOR_1.d_scalar = 10;
+	//TIM4->CNT = 5000;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -386,38 +379,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //		{
 //			set_rotor_angle(setting);
 //		}
-		
-		throttel_left_counter ++;                                        //Increase the throttel_left_counter variable by 1 every time this routine is executed
-		if(throttel_left_counter > throttel_previous_memory )
-		{             //If the number of loops is larger then the throttel_previous_memory variable
-				
-			throttel_left_counter = 0; 
-			throttel_previous_memory = throttel_left;			//Reset the throttel_left_counter variable                     //Load the next throttle_left_motor variable
-				if(throttel_previous_memory < 0){                                     //If the throttel_previous_memory is negative  
-					HAL_GPIO_WritePin(stepper_port,  stepper1_dir , LOW);
-					throttel_previous_memory *= -1;//Invert the throttel_previous_memory variable
-				} 
-				else HAL_GPIO_WritePin(stepper_port,  stepper1_dir , HIGH);                                    //Set output 3 high for a forward direction of the stepper motor
-		}
-		else if(throttel_left_counter == 1)HAL_GPIO_WritePin(stepper_port,  stepper1_sig , HIGH);             //Set output 2 high to create a pulse for the stepper controller
-		else if(throttel_left_counter == 2)HAL_GPIO_WritePin(stepper_port,  stepper1_sig, LOW);
-		
-		throttle_counter_right_motor ++;                                          //Increase the throttle_counter_right_motor variable by 1 every time the routine is executed
-		if(throttle_counter_right_motor > throttle_right_motor_memory)
-		{           	//If the number of loops is larger then the throttle_right_motor_memory variable
-				throttle_counter_right_motor = 0;  
-				throttle_right_motor_memory	 =throttel_right;		//Reset the throttle_counter_right_motor variable
-				if(throttle_right_motor_memory < 0){   
-																												//If the throttle_right_motor_memory is negative
-					HAL_GPIO_WritePin(stepper_port,  stepper2_dir , LOW);	//Set output 5 low to reverse the direction of the stepper controller
-					throttle_right_motor_memory *= -1;																									//Invert the throttle_right_motor_memory variable
-				}
-				else HAL_GPIO_WritePin(stepper_port,  stepper2_dir , HIGH);                                                          //Set output 5 high for a forward direction of the stepper motor
-		}
-		else if(throttle_counter_right_motor == 1)HAL_GPIO_WritePin(stepper_port,  stepper2_sig , HIGH);             //Set output 4 high to create a pulse for the stepper controller
-		else if(throttle_counter_right_motor == 2)HAL_GPIO_WritePin(stepper_port,  stepper2_sig , LOW);           //Set output 4 low because the pulse only has to last for 20us
-		
-		//Pulse_Width_Calculator(&MOTOR_1);
+		Pulse_Width_Calculator(&MOTOR_1);
 	}
 
 	//PID For motor

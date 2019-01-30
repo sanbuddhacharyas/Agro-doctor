@@ -185,6 +185,33 @@ void set_rotor_angle(int input_angle)
 	
 }
 
+void Initialize_Steppers(void)
+	{
+		
+		STEPPER Rotor;
+		STEPPER Left_Right;
+		STEPPER First_Arm;
+		STEPPER Second_Arm;
+		
+		Rotor.Signal = STEPPER_ROTOR_SIGNAL;
+		Rotor.Direction = STEPPER_ROTOR_DIRECTION;
+		
+		Left_Right.Signal = STEPPER_LEFT_RIGHT_SIGNAL;
+		Left_Right.Direction = STEPPER_LEFT_RIGHT_DIRECTION;
+		
+		First_Arm.Signal = STEPPER_FIRST_ARM_SIGNAL;
+		First_Arm.Direction = STEPPER_FIRST_ARM_DIRECTION;
+		
+		Second_Arm.Signal = STEPPER_SECOND_ARM_SIGNAL;
+		Second_Arm.Direction = STEPPER_SECOND_ARM_DIRECTION;
+		
+		Rotor.Port = STEPPER_PORT_ROTOR;
+	  Left_Right.Port = STEPPER_PORT_LEFT_RIGHT;
+		First_Arm.Port = STEPPER_PORT_FIRST_ARM;
+		Second_Arm.Port = STEPPER_PORT_SECOND_ARM;
+		
+	}
+		
 void Calibrate_Base(void)
 {
 	throttel_left = -10;

@@ -1,7 +1,6 @@
 
 #include "PID.h"
 
-
 void PID_calculate(MPU6050* Datastruct,STEPPER* INFO ,int pid_setpoint)
 	{
 		INFO->setpoint = pid_setpoint;
@@ -33,15 +32,15 @@ void Pulse_Width_Calculator(STEPPER* INFO)
 			INFO->throttel_counter = 0;                                      //Reset the throttel_left_counter variable
 			INFO->throttel_previous_memory = INFO->throttel;                       //Load the next throttle_left_motor variable
 			if(INFO->throttel_previous_memory < 0){                          //If the throttel_previous_memory is negative
-				HAL_GPIO_WritePin(stepper_port, INFO->Direction , LOW);                            //Set output 3 low to reverse the direction of the stepper controller
+				HAL_GPIO_WritePin(INFO->Port, INFO->Direction , LOW);                            //Set output 3 low to reverse the direction of the stepper controller
 				INFO->throttel_previous_memory *= -1;                        //Invert the throttel_previous_memory variable
 			}
-			else HAL_GPIO_WritePin(stepper_port, INFO->Direction, HIGH);                              //Set output 3 high for a forward direction of the stepper motor
+			else HAL_GPIO_WritePin(INFO->Port, INFO->Direction, HIGH);                              //Set output 3 high for a forward direction of the stepper motor
 		}
 		
-		else if(INFO->throttel_counter == 1)HAL_GPIO_WritePin(stepper_port, INFO->Signal, HIGH);            //Set output 2 high to create a pulse for the stepper controller
+		else if(INFO->throttel_counter == 1)HAL_GPIO_WritePin(INFO->Port, INFO->Signal, HIGH);            //Set output 2 high to create a pulse for the stepper controller
 		
-		else if(INFO->throttel_counter == 2)HAL_GPIO_WritePin(stepper_port, INFO->Signal , LOW); 
+		else if(INFO->throttel_counter == 2)HAL_GPIO_WritePin(INFO->Port, INFO->Signal , LOW); 
 		
 	}
 		

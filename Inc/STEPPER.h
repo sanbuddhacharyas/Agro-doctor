@@ -4,16 +4,39 @@
 #include "stm32f4xx_hal.h"
 #include "tim.h"
 
-#define stepper_port GPIOC
-#define stepper1_sig GPIO_PIN_2
-#define stepper1_dir GPIO_PIN_3
-#define stepper2_sig GPIO_PIN_11
-#define stepper2_dir GPIO_PIN_2
+/****************STEPPERS******************
+MOTOR 1	(Rotor):	STEP = PE1	
+								  DIR  = PE0
+					
+MOTOR 2	(Left_Right):	STEP = PC13
+											DIR  = PC15
+					
+MOTOR 3(First_Arm):	STEP = PE4
+										DIR  = PE5
+					
+MOTOR 4(Second_Arm):	STEP = PB4
+											DIR  = PB5			
+
+
+****************STEPPERS******************/
+
+#define STEPPER_PORT_ROTOR GPIOE
+#define STEPPER_PORT_LEFT_RIGHT GPIOC
+#define STEPPER_PORT_FIRST_ARM GPIOE
+#define STEPPER_PORT_SECOND_ARM GPIOB
+
+#define STEPPER_ROTOR_SIGNAL	GPIO_PIN_1
+#define STEPPER_LEFT_RIGHT_SIGNAL GPIO_PIN_13
+#define STEPPER_FIRST_ARM_SIGNAL GPIO_PIN_4
+#define STEPPER_SECOND_ARM_SIGNAL GPIO_PIN_4
+
+#define STEPPER_ROTOR_DIRECTION GPIO_PIN_0
+#define STEPPER_LEFT_RIGHT_DIRECTION GPIO_PIN_15
+#define STEPPER_FIRST_ARM_DIRECTION GPIO_PIN_5
+#define STEPPER_SECOND_ARM_DIRECTION GPIO_PIN_5
+
 #define HIGH GPIO_PIN_SET
 #define LOW  GPIO_PIN_RESET
-#define sig_port GPIOC
-#define sig1 GPIO_PIN_0
-#define sig2 GPIO_PIN_1
 #define Right 1
 #define Left 0
 #define Front 1
@@ -31,6 +54,7 @@ float initial_angle();
 void Calibrate_Base(void);
 
 typedef struct {
+	GPIO_TypeDef * Port;
 	uint16_t Signal;
 	uint16_t Direction;
 	float pid_error;
@@ -50,5 +74,8 @@ typedef struct {
 	int throttel_previous_step;
 	} STEPPER;
 
+	void Initialize_Steppers(void);
+	
+	
 #endif
 

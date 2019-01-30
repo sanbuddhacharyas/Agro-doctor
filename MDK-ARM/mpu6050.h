@@ -57,6 +57,10 @@ void MPU6050_Initialize(MPU6050* Datastruct);
 void MPU_GET_VALUE(MPU6050* Datastruct);
 void MPU_SHOW_DATA(MPU6050* Datastruct);
 void MPU_GYRO_CAL_Y(MPU6050* Datastruct);
+void Initialize_MPUs(void);
+
+//MPU6050 MPU1 = {mpu2_address , &hi2c2};
+//MPU6050 MPU2 = {mpu2_address , &hi2c2};
 
 #endif
 

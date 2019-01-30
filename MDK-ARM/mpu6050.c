@@ -131,3 +131,24 @@ void MPU_SHOW_DATA(MPU6050* Datastruct)
 //		Datastruct->Gyroscope_X,Datastruct->Gyroscope_Y,Datastruct->Gyroscope_Z);
 //	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
 }
+
+
+void Initialize_MPUs(void)
+{
+	MPU6050 MPU1;
+	MPU6050 MPU2;
+	MPU6050 MPU3;
+	
+	MPU1.Address = mpu1_address;
+	MPU2.Address = mpu2_address;
+	MPU3.Address = mpu3_address;
+	
+//	MPU1.I2C_Port = hi2c1;
+//	MPU1.I2C_Port = hi2c1;
+//	MPU3.I2C_Port = hi2c2;
+	
+	MPU6050_Initialize(&MPU1);
+	MPU6050_Initialize(&MPU2);
+	MPU6050_Initialize(&MPU3);
+	
+}
