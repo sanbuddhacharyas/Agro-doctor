@@ -122,7 +122,7 @@ int fputc(int ch, FILE *f)
 	uint32_t encoder_wheel_state=0;
 	uint32_t reading_pre=0;
 	float angle;
-	int ds = 0 ,my_angle = 0 ;
+	int ds = 0 ,my_angle = 20 ;
 	char str[30];
 	char tx_data[100];
 	float checker;
@@ -195,26 +195,28 @@ int main(void)
 	HAL_TIM_Base_Start_IT(&htim9);
 	//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 	//HAL_TIM_Base_Start_IT(&htim6);
-//	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
+	HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx ,1 );
 //	TIM4->CNT = 11;
 //	encoder_reading_wheel = 11;
 //	encoder_reading_pre =11;
 //	direction_left_right =0 ;
-	//TIM4->CNT = 5000;
+	TIM3->CNT = 5000;
   /* USER CODE END 2 */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	//Initialize_MPUs();
-	//Initialize_Steppers();
+	Initialize_Steppers();
 
 		//HAL_TIM_Base_Start_IT(&htim1);
 		//TIM1->CNT = 0;
 	//MPU_GYRO_CAL_Y(&MPU1);
 	//Calibrate_Base();
-	//throttel_left = -10;
+//	Rotor.throttel = -10;
   while (1)
   {
+	//	Left_Right.throttel = 20;
+		//First_Arm.throttel = 20;
+		//Second_Arm.throttel = 20;
 		//set_rotor_angle(20);
 		//MPU_GET_VALUE(&MPU1);
 //		checker = MPU1.Angle;
@@ -387,6 +389,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			{
 				current_angle = 0;
 				setting = 0;
+				current_encoder_reading = 0;
 				calibrated = TRUE;
 			}
 		}
@@ -402,7 +405,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	//PID For motor
 	if(htim->Instance == TIM5)				//PID Refresher(1ms)
 	{
-		
 		/*_pid = pid(ds, 1000, 0 );
 	
 		if (_pid > 0 )
@@ -424,9 +426,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
-			
 		}		*/
-		//set_angle(my_angle,NULL);
+			set_angle(my_angle,NULL);
+		
 		
 	}
 	
@@ -440,7 +442,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		//cal1 = sqrt(MPU2.Accelerometer_X*MPU2.Accelerometer_X+MPU2.Accelerometer_Y*MPU2.Accelerometer_Y+MPU2.Accelerometer_Z*MPU2.Accelerometer_Z);
      MPU1.Accel_Angle = asin((float)MPU1.Accelerometer_X/cal)*RAD_TO_DEG;
 		 //MPU2.Accel_Angle = asin((float)MPU2.Accelerometer_X/cal1)*RAD_TO_DEG;
-
+ 
 		if(set_gyro_angle)
 		{
 	  MPU1.Angle = MPU1.Angle*0.96 +MPU1.Accel_Angle*0.04;
@@ -459,9 +461,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if(huart->Instance == USART2)
+	if(huart->Instance == USART3)
 	{
-		
 			receive = uart_rx - 48;
 			if(receive == 1)
 			{
@@ -513,7 +514,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 					buff_sum = buff_sum*10 + receive_buffer[i];
 					
 				}
-				setting = buff_sum;
+				my_angle = buff_sum;
 
 				buff_sum =0;
 				range =0;
@@ -558,13 +559,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			
 			}
 			
-			
 			else
 			{
 			  receive_buffer[range++] = receive;
 			}
 
-				HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
+				HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx ,1 );
 	
 	}
 

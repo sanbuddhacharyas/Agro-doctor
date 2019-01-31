@@ -75,7 +75,6 @@ typedef struct {
 	int throttel_previous_step;
 	} STEPPER;
 
-	
-	
+
 #endif
 

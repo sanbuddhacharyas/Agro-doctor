@@ -46,7 +46,7 @@ float left_right_angle()
 {
 	if(encoder_reading_left_right >1000)
 	{
-		return(asin((3000-encoder_reading_left_right)/(radius* linear_encoder_in_cm)) * 57.29577951);
+		return(asin((10000-encoder_reading_left_right)/(radius* linear_encoder_in_cm)) * 57.29577951);
 	}
 	else
 	{
@@ -97,16 +97,16 @@ void set_angle(float ang,uint8_t direction)
 	test1 = ang;
 	test = left_right_angle();
 	left_right_error = ang - test;
-	if (left_right_error < 0.1 && left_right_error > -0.1)
+	if (left_right_error < 0.5 && left_right_error > -0.5)
 		left_right_error =0;
 	
 	if(left_right_error > 0 )
 	{
-		Left_Right.throttel =  -30;				//motor will go towards right
+		Left_Right.throttel =  -20;				//motor will go towards right
 	}
 	else if(left_right_error < 0)
 	{
-		Left_Right.throttel = 30;			//motor will go toward left
+		Left_Right.throttel = 20;			//motor will go toward left
 	}
 	else
 	{
@@ -176,7 +176,6 @@ void set_rotor_angle(int input_angle)
 
 void Initialize_Steppers(void)
 	{
-		
 		Rotor.Signal = STEPPER_ROTOR_SIGNAL;
 		Rotor.Direction = STEPPER_ROTOR_DIRECTION;
 		
@@ -193,7 +192,6 @@ void Initialize_Steppers(void)
 	  Left_Right.Port = STEPPER_PORT_LEFT_RIGHT;
 		First_Arm.Port = STEPPER_PORT_FIRST_ARM;
 		Second_Arm.Port = STEPPER_PORT_SECOND_ARM;
-		
 	}
 		
 void Calibrate_Base(void)

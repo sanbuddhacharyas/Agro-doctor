@@ -80,6 +80,7 @@ extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim9;
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
@@ -251,7 +252,6 @@ void TIM1_UP_TIM10_IRQHandler(void)
 
   /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
-	
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
 	
 	/*total_encoder = c * fullcounter + (encoder_reading_wheel-10);
@@ -321,7 +321,7 @@ void TIM1_TRG_COM_TIM11_IRQHandler(void)
   /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_TRG_COM_TIM11_IRQn 1 */
-
+encoder_reading_wheel = TIM1->CNT;
   /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 1 */
 }
 
@@ -335,7 +335,7 @@ void TIM1_CC_IRQHandler(void)
   /* USER CODE END TIM1_CC_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_CC_IRQn 1 */
-
+encoder_reading_wheel = TIM1->CNT;
   /* USER CODE END TIM1_CC_IRQn 1 */
 }
 
@@ -381,7 +381,7 @@ void TIM3_IRQHandler(void)
 	{
 		CURRENT_ROTATION = CLOCKWISE;
 	}
-	difference = new_count - previous_count;
+	difference = -(new_count - previous_count);			//Because Channel A and Channel B was swapped
 	current_encoder_reading += difference;
 	current_angle += (difference/24);
 	//current_angle = difference / 24;
@@ -477,6 +477,20 @@ void EXTI15_10_IRQHandler(void)
 	}
 
   /* USER CODE END EXTI15_10_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM5 global interrupt.
+*/
+void TIM5_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM5_IRQn 0 */
+
+  /* USER CODE END TIM5_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim5);
+  /* USER CODE BEGIN TIM5_IRQn 1 */
+
+  /* USER CODE END TIM5_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

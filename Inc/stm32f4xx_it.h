@@ -67,6 +67,7 @@ void USART1_IRQHandler(void);
 void USART2_IRQHandler(void);
 void USART3_IRQHandler(void);
 void EXTI15_10_IRQHandler(void);
+void TIM5_IRQHandler(void);
 
 #ifdef __cplusplus
 }
