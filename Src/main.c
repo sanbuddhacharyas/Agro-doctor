@@ -175,12 +175,16 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
-  MX_TIM6_Init();
   MX_I2C2_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_I2C1_Init();
+  MX_USART1_UART_Init();
+  MX_USART3_UART_Init();
+  MX_TIM4_Init();
+  MX_TIM5_Init();
+  MX_TIM9_Init();
 
   /* USER CODE BEGIN 2 */
 	HAL_TIM_Encoder_Start_IT(&htim1,TIM_CHANNEL_ALL);
@@ -306,11 +310,10 @@ int main(void)
 			
 			}
 	*/
-  /* USER CODE END WHILE */
 }
+  /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-
 
   /* USER CODE END 3 */
 
@@ -374,10 +377,9 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	if(htim->Instance == TIM3)
+	if(htim->Instance == TIM4)
 	{
-		//HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
-		/*if(calibrated == CALIBRATING)
+		if(calibrated == CALIBRATING)
 		{
 			set_rotor_angle(setting);
 			if(current_angle >=31)
@@ -389,9 +391,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 		else if (calibrated == TRUE)
 			set_rotor_angle(setting);
-			*/
 		
-		Pulse_Width_Calculator(&Rotor);
+	  Pulse_Width_Calculator(&Rotor);
 		Pulse_Width_Calculator(&Left_Right);
 		Pulse_Width_Calculator(&First_Arm);
 		Pulse_Width_Calculator(&Second_Arm);
@@ -430,7 +431,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	
 	if(htim->Instance == TIM1)
 	{
-	  MPU_SHOW_DATA(&MPU1);			//This will give raw data(CAution!!!!!)
+	 /* MPU_SHOW_DATA(&MPU1);			//This will give raw data(CAution!!!!!)
 		 //MPU_SHOW_DATA(&MPU2);			//This will give raw data(CAution!!!!!)
      MPU1.Angle += MPU1.Gyroscope_Y*0.004;		//As we require angle in milisecond basis
 		//MPU2.Angle += MPU2.Gyroscope_Y/1000;		//As we require angle in milisecond basis
@@ -451,7 +452,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			set_gyro_angle = 1;
 		}
 //		sprintf(string,"Angle ->%f\r\n",MPU1.Angle);
-//	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
+//	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);*/
 	}		
 }
 

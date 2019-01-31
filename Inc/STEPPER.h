@@ -52,6 +52,7 @@ int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode);
 void set_rotor_angle(int ang);
 float initial_angle();
 void Calibrate_Base(void);
+void Initialize_Steppers(void);
 
 typedef struct {
 	GPIO_TypeDef * Port;
@@ -74,7 +75,6 @@ typedef struct {
 	int throttel_previous_step;
 	} STEPPER;
 
-	void Initialize_Steppers(void);
 	
 	
 #endif

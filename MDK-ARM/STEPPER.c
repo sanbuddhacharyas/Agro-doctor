@@ -102,20 +102,17 @@ void set_angle(float ang,uint8_t direction)
 	
 	if(left_right_error > 0 )
 	{
-		throttel_left =  -70;				//motor will go towards right
-		throttel_right = -70;	
+		Left_Right.throttel =  -70;				//motor will go towards right
 		
 	}
 	else if(left_right_error < 0)
 	{
-		throttel_left = 70;			//motor will go toward left
-		throttel_right = 70;
+		Left_Right.throttel = 70;			//motor will go toward left
 	}
 
 	else
 	{
-			throttel_left =  0;
-			throttel_right = 0;	
+			Left_Right.throttel = 0;
 	}
 } 
 
