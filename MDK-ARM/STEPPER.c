@@ -30,6 +30,11 @@ extern volatile int total_distance ;
 extern float current_angle;
 int input = 0;
 
+	extern STEPPER Rotor;
+	extern STEPPER Left_Right;
+	extern STEPPER First_Arm;
+	extern STEPPER Second_Arm;
+
 float distance_travelled(uint32_t encoder_reading_wheel)
 {
 	
@@ -51,7 +56,7 @@ float left_right_angle()
 
 void move(uint32_t distance, float velocity,int dir)
 {
-	if(dir == Front)
+	/*if(dir == Front)
 	{
 		while(distance > encoder_reading_wheel )
 		{
@@ -84,7 +89,7 @@ void move(uint32_t distance, float velocity,int dir)
 	HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 	HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
-			
+			*/
 }
 
 void set_angle(float ang,uint8_t direction)
@@ -187,11 +192,6 @@ void set_rotor_angle(int input_angle)
 
 void Initialize_Steppers(void)
 	{
-		
-		STEPPER Rotor;
-		STEPPER Left_Right;
-		STEPPER First_Arm;
-		STEPPER Second_Arm;
 		
 		Rotor.Signal = STEPPER_ROTOR_SIGNAL;
 		Rotor.Direction = STEPPER_ROTOR_DIRECTION;

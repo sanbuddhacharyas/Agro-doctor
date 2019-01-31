@@ -14,6 +14,12 @@ float angle_gyro=0,del_x;
 int set_gyro_angle = 0;
 char string[100];
 
+
+	extern MPU6050 MPU1;
+	extern MPU6050 MPU2;
+	extern MPU6050 MPU3;
+	
+
 #define RAD_TO_DEG 57.295779513082320876798154814105
 #define PI 3.1415926535897932384626433832795
 
@@ -132,12 +138,8 @@ void MPU_SHOW_DATA(MPU6050* Datastruct)
 //	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
 }
 
-
 void Initialize_MPUs(void)
 {
-	MPU6050 MPU1;
-	MPU6050 MPU2;
-	MPU6050 MPU3;
 	
 	MPU1.Address = mpu1_address;
 	MPU2.Address = mpu2_address;

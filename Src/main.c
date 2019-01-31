@@ -64,7 +64,18 @@
 /* USER CODE BEGIN PV */
 
 /* Private variables ---------------------------------------------------------*/
+/*************Initializtions****************/
 
+	MPU6050 MPU1;
+	MPU6050 MPU2;
+	MPU6050 MPU3;
+	
+	STEPPER Rotor;
+	STEPPER Left_Right;
+	STEPPER First_Arm;
+	STEPPER Second_Arm;
+	
+	
 struct __FILE{
 	
 int handle;
@@ -140,6 +151,7 @@ void SystemClock_Config(void);
 
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 	
   /* USER CODE END 1 */
@@ -187,15 +199,21 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	HAL_Delay(1000);
+	//Initialize_MPUs();
+	Initialize_Steppers();
+	
 	//MPU6050_Initialize(&MPU1);
 		//HAL_TIM_Base_Start_IT(&htim1);
 		//TIM1->CNT = 0;
 	//MPU_GYRO_CAL_Y(&MPU1);
 	//Calibrate_Base();
-	throttel_left = -10;
+	//throttel_left = -10;
   while (1)
   {
+		Rotor.throttel = 30;
+		Left_Right.throttel = 30;
+		First_Arm.throttel = 30;
+		Second_Arm.throttel = 30;
 		//set_rotor_angle(20);
 		//MPU_GET_VALUE(&MPU1);
 //		checker = MPU1.Angle;
@@ -296,9 +314,11 @@ int main(void)
 
   /* USER CODE BEGIN 3 */
 
-  }
-}
+
   /* USER CODE END 3 */
+
+}
+	}
 
 /** System Clock Configuration
 */
@@ -374,12 +394,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		else if (calibrated == TRUE)
 			set_rotor_angle(setting);
 			
-			
-//			if(calibrated == TRUE )
-//		{
-//			set_rotor_angle(setting);
-//		}
-		Pulse_Width_Calculator(&MOTOR_1);
+		
+		Pulse_Width_Calculator(&Rotor);
+		Pulse_Width_Calculator(&Left_Right);
+		Pulse_Width_Calculator(&First_Arm);
+		Pulse_Width_Calculator(&Second_Arm);
 	}
 
 	//PID For motor
