@@ -68,6 +68,9 @@
 #define Wheel_enco_1_GPIO_Port GPIOE
 #define Wheel_enco_2_Pin GPIO_PIN_11
 #define Wheel_enco_2_GPIO_Port GPIOE
+#define Stopper_Interrupt_Pin GPIO_PIN_10
+#define Stopper_Interrupt_GPIO_Port GPIOD
+#define Stopper_Interrupt_EXTI_IRQn EXTI15_10_IRQn
 #define LED_Pin GPIO_PIN_14
 #define LED_GPIO_Port GPIOD
 #define Stepper4_Signal_Pin GPIO_PIN_4

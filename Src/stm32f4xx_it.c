@@ -251,7 +251,62 @@ void TIM1_UP_TIM10_IRQHandler(void)
 
   /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
+	
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
+	
+	/*total_encoder = c * fullcounter + (encoder_reading_wheel-10);
+	total_distance = distance_travelled( total_encoder);
+	
+	if(encoder_reading_pre < TIM1->CNT)
+		direction_wheel = Front;
+	else if(encoder_reading_pre > TIM1->CNT)
+		direction_wheel = Back;*/
+	/*
+	if(c == 0)
+	{
+		if(encoder_reading_pre < 15 && encoder_reading_pre >10   && encoder_reading_pre < TIM4->CNT  )
+			encoder_wheel_state = 1;
+		
+		else if(encoder_reading_pre < (fullcounter) && encoder_reading_pre > (fullcounter -5) && encoder_reading_pre >TIM4->CNT)
+			encoder_wheel_state =0 ;
+		
+	}
+*/
+//	if(encoder_wheel_state == 1)
+//	{
+	/*	if(encoder_reading_wheel > fullcounter && direction_wheel == Front)
+		{
+			c++;
+			TIM1->CNT =10;
+		}
+		
+		else if(encoder_reading_wheel < 10 && encoder_reading_wheel>0 && direction_wheel == Back )
+		{
+			if(c!=0 )
+				c--;	
+			TIM4->CNT = fullcounter;
+			
+		}*/
+		encoder_reading_wheel = TIM1->CNT;
+	//}
+	/*
+	else
+	{
+		if((-encoder_reading_wheel) > fullcounter && direction_wheel == Back)
+		{
+			c--;
+			TIM4->CNT = 10;
+		}
+		else if( -encoder_reading_wheel < 10 && -encoder_reading_wheel>0 && direction_wheel == Front )
+		{
+			c++;
+			TIM4->CNT = fullcounter;
+		}
+		
+		encoder_reading_wheel = -(fullcounter - TIM4->CNT);
+	}
+		*/
+	encoder_reading_pre = TIM1->CNT;
 
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }
@@ -294,6 +349,14 @@ void TIM2_IRQHandler(void)
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */
+	
+	if(encoder_reading_left_right > TIM2->CNT)
+		direction_left_right = Right;
+	
+	else if(encoder_reading_left_right < TIM2->CNT)
+		direction_left_right = Left;
+	
+	encoder_reading_left_right = TIM2->CNT;
 
   /* USER CODE END TIM2_IRQn 1 */
 }
@@ -308,6 +371,24 @@ void TIM3_IRQHandler(void)
   /* USER CODE END TIM3_IRQn 0 */
   HAL_TIM_IRQHandler(&htim3);
   /* USER CODE BEGIN TIM3_IRQn 1 */
+	/**************MY_CODE**************/
+	new_count = TIM3->CNT;
+	if(new_count > previous_count)		//This count was made 5000 (where overflow was 10000) while interrupt occured
+	{
+		CURRENT_ROTATION = ANTI_CLOCKWISE;
+	}
+	if(new_count < previous_count)
+	{
+		CURRENT_ROTATION = CLOCKWISE;
+	}
+	difference = new_count - previous_count;
+	current_encoder_reading += difference;
+	current_angle += (difference/24);
+	//current_angle = difference / 24;
+	previous_count = new_count;
+	
+	/**************MY_CODE**************/
+	
 
   /* USER CODE END TIM3_IRQn 1 */
 }
@@ -366,6 +447,36 @@ void USART3_IRQHandler(void)
   /* USER CODE BEGIN USART3_IRQn 1 */
 
   /* USER CODE END USART3_IRQn 1 */
+}
+
+/**
+* @brief This function handles EXTI line[15:10] interrupts.
+*/
+void EXTI15_10_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+	
+	if(calibrated != TRUE)
+	{
+		throttel_left = 0;
+		setting = 0;
+		HAL_GPIO_TogglePin(GPIOD ,GPIO_PIN_14);
+		calibrated = CALIBRATING;
+		current_angle = 0;
+		setting = 32;		//Go to home position
+		//current_encoder_reading = 0;
+//		while(current_encoder_reading <= 777)
+//		{
+//			throttel_left = 10;
+//		}
+		throttel_left = 10;
+	}
+
+  /* USER CODE END EXTI15_10_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

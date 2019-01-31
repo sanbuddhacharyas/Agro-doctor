@@ -102,14 +102,12 @@ void set_angle(float ang,uint8_t direction)
 	
 	if(left_right_error > 0 )
 	{
-		Left_Right.throttel =  -70;				//motor will go towards right
-		
+		Left_Right.throttel =  -30;				//motor will go towards right
 	}
 	else if(left_right_error < 0)
 	{
-		Left_Right.throttel = 70;			//motor will go toward left
+		Left_Right.throttel = 30;			//motor will go toward left
 	}
-
 	else
 	{
 			Left_Right.throttel = 0;
@@ -152,24 +150,14 @@ int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode)
 
 float initial_angle()
 {
-	float ang;
+//	float ang;
 	//if(direction_left_right == Right)
 	//else
 		//ang = -((10000 - encoder_reading_wheel)/24);
 	
-	return ((encoder_reading_wheel/24));
+	return ((float)(encoder_reading_wheel/24));
 }
 	
-/*void set_rotor_angle(int ang)
-{
-	desired_position = ang* SCALE;
-	while(desired_position > encoder_reading_wheel)
-	{
-		throttel_left = 30;
-	}
-	throttel_left = 0;
-}
-*/ 
 void set_rotor_angle(int input_angle)
 {
 	int angle = current_angle;
@@ -177,13 +165,12 @@ void set_rotor_angle(int input_angle)
 	if(fabs((float)input_angle - angle) > 0.1)
 	{
 		if(input_angle > angle)
-		throttel_left =10;
+		Rotor.throttel =10;
 	else
-		throttel_left = -10;
-		
+		Rotor.throttel = -10;
 	}
 	else
-		throttel_left = 0;
+		Rotor.throttel = 0;
 	
 }
 

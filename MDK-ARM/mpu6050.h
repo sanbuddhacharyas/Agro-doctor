@@ -1,7 +1,6 @@
 #ifndef MPU6050_H_
 #define MPU6050_H_
 
-
 #include "stm32f4xx_hal.h"
 #include "i2c.h"
 #include "usart.h"

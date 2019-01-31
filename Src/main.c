@@ -190,9 +190,10 @@ int main(void)
 	HAL_TIM_Encoder_Start_IT(&htim1,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start_IT(&htim2,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start_IT(&htim3,TIM_CHANNEL_ALL);
-	//HAL_TIM_Encoder_Start_IT(&htim4,TIM_CHANNEL_ALL);
+	HAL_TIM_Base_Start_IT(&htim4);
+	HAL_TIM_Base_Start_IT(&htim5);
+	HAL_TIM_Base_Start_IT(&htim9);
 	//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-//	HAL_TIM_Base_Start_IT(&htim3);
 	//HAL_TIM_Base_Start_IT(&htim6);
 //	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
 //	TIM4->CNT = 11;
@@ -377,7 +378,7 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	if(htim->Instance == TIM4)
+	if(htim->Instance == TIM4)			//Stepper_Refresher(20us)
 	{
 		if(calibrated == CALIBRATING)
 		{
@@ -399,9 +400,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	}
 
 	//PID For motor
-	if(htim->Instance == TIM6)
+	if(htim->Instance == TIM5)				//PID Refresher(1ms)
 	{
-		//	set_rotor_angle(5);
+		
 		/*_pid = pid(ds, 1000, 0 );
 	
 		if (_pid > 0 )
@@ -429,9 +430,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		
 	}
 	
-	if(htim->Instance == TIM1)
+	if(htim->Instance == TIM9)			//Angle Calculator(4 ms)
 	{
-	 /* MPU_SHOW_DATA(&MPU1);			//This will give raw data(CAution!!!!!)
+	  MPU_SHOW_DATA(&MPU1);			//This will give raw data(CAution!!!!!)
 		 //MPU_SHOW_DATA(&MPU2);			//This will give raw data(CAution!!!!!)
      MPU1.Angle += MPU1.Gyroscope_Y*0.004;		//As we require angle in milisecond basis
 		//MPU2.Angle += MPU2.Gyroscope_Y/1000;		//As we require angle in milisecond basis
@@ -452,13 +453,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			set_gyro_angle = 1;
 		}
 //		sprintf(string,"Angle ->%f\r\n",MPU1.Angle);
-//	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);*/
+//	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
 	}		
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	
 	if(huart->Instance == USART2)
 	{
 		
