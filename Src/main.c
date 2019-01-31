@@ -202,9 +202,10 @@ int main(void)
 //	direction_left_right =0 ;
 	TIM3->CNT = 5000;
   /* USER CODE END 2 */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	//Initialize_MPUs();
+	Initialize_MPUs();
 	Initialize_Steppers();
 
 		//HAL_TIM_Base_Start_IT(&htim1);
@@ -221,8 +222,8 @@ int main(void)
 		//MPU_GET_VALUE(&MPU1);
 //		checker = MPU1.Angle;
 //	PID_calculate(&MPU1,&MOTOR_1,setting);
-		//sprintf(tx_data,"Angle: %f ,, throttel_left: %d\r\n",current_angle , throttel_left);
-		//HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
+		sprintf(tx_data,"Angle1: %f , Angle2: %f\r\n",MPU1.Angle , MPU2.Angle);
+		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
 	//	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
 //		sprintf(tx_data,"Angle: %f , Setpoint: %d , error: %f , throttel: %d\r\n",MPU1.Angle , MOTOR_1.setpoint,MOTOR_1.pid_error , MOTOR_1.throttel);
 //		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
@@ -242,7 +243,6 @@ int main(void)
 		*/
 	//angle = left_right_angle();
 	//  set_angle(10, Right);
-		
 	/*	if(rec == 0)
 		{
 			throttel_left = 0;
@@ -250,7 +250,6 @@ int main(void)
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
-		
 		}
 		
 		 else if(rec == 1)
@@ -428,8 +427,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 		}		*/
 			set_angle(my_angle,NULL);
-		
-		
+			
 	}
 	
 	if(htim->Instance == TIM9)			//Angle Calculator(4 ms)
@@ -565,7 +563,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			}
 
 				HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx ,1 );
-	
 	}
 
 }
