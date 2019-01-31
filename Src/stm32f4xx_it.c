@@ -77,9 +77,8 @@ extern UART_HandleTypeDef huart2;
 
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
-extern TIM_HandleTypeDef htim4;
-extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim6;
 extern UART_HandleTypeDef huart2;
 
@@ -226,35 +225,6 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-* @brief This function handles EXTI line[9:5] interrupts.
-*/
-void EXTI9_5_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
-
-  /* USER CODE END EXTI9_5_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
-  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
-
-	if(calibrated != TRUE)
-	{
-		throttel_left = 0;
-		setting = 0;
-		HAL_GPIO_TogglePin(GPIOD ,GPIO_PIN_14);
-		calibrated = CALIBRATING;
-		current_angle = 0;
-		setting = 32;		//Go to home position
-		//current_encoder_reading = 0;
-//		while(current_encoder_reading <= 777)
-//		{
-//			throttel_left = 10;
-//		}
-		throttel_left = 10;
-	}
-  /* USER CODE END EXTI9_5_IRQn 1 */
-}
-
-/**
 * @brief This function handles TIM1 break interrupt and TIM9 global interrupt.
 */
 void TIM1_BRK_TIM9_IRQHandler(void)
@@ -283,6 +253,48 @@ void TIM1_UP_TIM10_IRQHandler(void)
 }
 
 /**
+* @brief This function handles TIM1 trigger and commutation interrupts and TIM11 global interrupt.
+*/
+void TIM1_TRG_COM_TIM11_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_TRG_COM_TIM11_IRQn 0 */
+
+  /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim1);
+  /* USER CODE BEGIN TIM1_TRG_COM_TIM11_IRQn 1 */
+
+  /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM1 capture compare interrupt.
+*/
+void TIM1_CC_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_CC_IRQn 0 */
+
+  /* USER CODE END TIM1_CC_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim1);
+  /* USER CODE BEGIN TIM1_CC_IRQn 1 */
+
+  /* USER CODE END TIM1_CC_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM2 global interrupt.
+*/
+void TIM2_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM2_IRQn 0 */
+
+  /* USER CODE END TIM2_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim2);
+  /* USER CODE BEGIN TIM2_IRQn 1 */
+
+  /* USER CODE END TIM2_IRQn 1 */
+}
+
+/**
 * @brief This function handles TIM3 global interrupt.
 */
 void TIM3_IRQHandler(void)
@@ -297,92 +309,6 @@ void TIM3_IRQHandler(void)
 }
 
 /**
-* @brief This function handles TIM4 global interrupt.
-*/
-void TIM4_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM4_IRQn 0 */
-
-  /* USER CODE END TIM4_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim4);
-  /* USER CODE BEGIN TIM4_IRQn 1 */
-	//encoder_reading_wheel = TIM4->CNT;
-	/**************MY_CODE**************/
-	new_count = TIM4->CNT;
-	if(new_count > previous_count)		//This count was made 10000 (where overflow was 20000) while interrupt occured
-	{
-		CURRENT_ROTATION = ANTI_CLOCKWISE;
-	}
-	if(new_count < previous_count)
-	{
-		CURRENT_ROTATION = CLOCKWISE;
-	}
-	difference = new_count - previous_count;
-	current_encoder_reading += difference;
-	current_angle += (difference/24);
-	//current_angle = difference / 24;
-	previous_count = new_count;
-	
-	
-	/**************MY_CODE**************/
-	
-	/*total_encoder = c * fullcounter + (encoder_reading_wheel-10);
-	total_distance = distance_travelled( total_encoder);
-	
-	if(encoder_reading_pre < TIM4->CNT)
-		direction_wheel = Front;
-	else if(encoder_reading_pre > TIM4->CNT)
-		direction_wheel = Back;*/
-	/*
-	if(c == 0)
-	{
-		if(encoder_reading_pre < 15 && encoder_reading_pre >10   && encoder_reading_pre < TIM4->CNT  )
-			encoder_wheel_state = 1;
-		
-		else if(encoder_reading_pre < (fullcounter) && encoder_reading_pre > (fullcounter -5) && encoder_reading_pre >TIM4->CNT)
-			encoder_wheel_state =0 ;
-		
-	}
-*/
-//	if(encoder_wheel_state == 1)
-//	{
-	/*	if(encoder_reading_wheel > fullcounter && direction_wheel == Front)
-		{
-			c++;
-			TIM4->CNT =10;
-		}
-		
-		else if(encoder_reading_wheel < 10 && encoder_reading_wheel>0 && direction_wheel == Back )
-		{
-			if(c!=0 )
-				c--;	
-			TIM4->CNT = fullcounter;
-			
-		}*/
-		encoder_reading_wheel = TIM4->CNT;
-	//}
-	/*
-	else
-	{
-		if((-encoder_reading_wheel) > fullcounter && direction_wheel == Back)
-		{
-			c--;
-			TIM4->CNT = 10;
-		}
-		else if( -encoder_reading_wheel < 10 && -encoder_reading_wheel>0 && direction_wheel == Front )
-		{
-			c++;
-			TIM4->CNT = fullcounter;
-		}
-		
-		encoder_reading_wheel = -(fullcounter - TIM4->CNT);
-	}
-		*/
-	encoder_reading_pre = TIM4->CNT;
-  /* USER CODE END TIM4_IRQn 1 */
-}
-
-/**
 * @brief This function handles USART2 global interrupt.
 */
 void USART2_IRQHandler(void)
@@ -394,27 +320,6 @@ void USART2_IRQHandler(void)
   /* USER CODE BEGIN USART2_IRQn 1 */
  
   /* USER CODE END USART2_IRQn 1 */
-}
-
-/**
-* @brief This function handles TIM5 global interrupt.
-*/
-void TIM5_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM5_IRQn 0 */
-
-  /* USER CODE END TIM5_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim5);
-  /* USER CODE BEGIN TIM5_IRQn 1 */
-	if(encoder_reading_left_right > TIM5->CNT)
-		direction_left_right = Right;
-	
-	else if(encoder_reading_left_right < TIM5->CNT)
-		direction_left_right = Left;
-	
-	encoder_reading_left_right = TIM5->CNT;
-
-  /* USER CODE END TIM5_IRQn 1 */
 }
 
 /**

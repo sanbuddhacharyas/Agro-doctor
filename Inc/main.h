@@ -48,24 +48,36 @@
 
 /* Private define ------------------------------------------------------------*/
 
-#define Base_Motor_Signal_1_Pin GPIO_PIN_0
-#define Base_Motor_Signal_1_GPIO_Port GPIOC
-#define Base_Motor_Signal_2_Pin GPIO_PIN_1
-#define Base_Motor_Signal_2_GPIO_Port GPIOC
-#define Stepper_Signal_Pin GPIO_PIN_2
-#define Stepper_Signal_GPIO_Port GPIOC
-#define Stepper_Direction_Pin GPIO_PIN_3
-#define Stepper_Direction_GPIO_Port GPIOC
-#define left_right_encoder1_Pin GPIO_PIN_0
-#define left_right_encoder1_GPIO_Port GPIOA
-#define left_right_encoder2_Pin GPIO_PIN_1
-#define left_right_encoder2_GPIO_Port GPIOA
-#define Base_Motor_PWM_Pin GPIO_PIN_5
-#define Base_Motor_PWM_GPIO_Port GPIOA
-#define wheel_enco2_Pin GPIO_PIN_12
-#define wheel_enco2_GPIO_Port GPIOD
-#define wheel_enco1_Pin GPIO_PIN_13
-#define wheel_enco1_GPIO_Port GPIOD
+#define Stepper3_Signal_Pin GPIO_PIN_4
+#define Stepper3_Signal_GPIO_Port GPIOE
+#define Stepper3_Direction_Pin GPIO_PIN_5
+#define Stepper3_Direction_GPIO_Port GPIOE
+#define Stepper2_Signal_Pin GPIO_PIN_13
+#define Stepper2_Signal_GPIO_Port GPIOC
+#define Stepper2_Direction_Pin GPIO_PIN_15
+#define Stepper2_Direction_GPIO_Port GPIOC
+#define Left_Right_enco_2_Pin GPIO_PIN_1
+#define Left_Right_enco_2_GPIO_Port GPIOA
+#define Left_Right_enco_1_Pin GPIO_PIN_5
+#define Left_Right_enco_1_GPIO_Port GPIOA
+#define Rotor_enco_1_Pin GPIO_PIN_6
+#define Rotor_enco_1_GPIO_Port GPIOA
+#define Rotor_enco_2_Pin GPIO_PIN_7
+#define Rotor_enco_2_GPIO_Port GPIOA
+#define Wheel_enco_1_Pin GPIO_PIN_9
+#define Wheel_enco_1_GPIO_Port GPIOE
+#define Wheel_enco_2_Pin GPIO_PIN_11
+#define Wheel_enco_2_GPIO_Port GPIOE
+#define LED_Pin GPIO_PIN_14
+#define LED_GPIO_Port GPIOD
+#define Stepper4_Signal_Pin GPIO_PIN_4
+#define Stepper4_Signal_GPIO_Port GPIOB
+#define Stepper4_Direction_Pin GPIO_PIN_5
+#define Stepper4_Direction_GPIO_Port GPIOB
+#define Stepper1_Direction_Pin GPIO_PIN_0
+#define Stepper1_Direction_GPIO_Port GPIOE
+#define Stepper1_Signal_Pin GPIO_PIN_1
+#define Stepper1_Signal_GPIO_Port GPIOE
 
 /* ########################## Assert Selection ############################## */
 /**

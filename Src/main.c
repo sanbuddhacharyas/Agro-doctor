@@ -174,21 +174,22 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_TIM2_Init();
   MX_USART2_UART_Init();
-  MX_TIM4_Init();
-  MX_TIM3_Init();
-  MX_TIM5_Init();
   MX_TIM6_Init();
-  MX_TIM1_Init();
   MX_I2C2_Init();
+  MX_TIM1_Init();
+  MX_TIM2_Init();
+  MX_TIM3_Init();
+  MX_I2C1_Init();
 
   /* USER CODE BEGIN 2 */
-	HAL_TIM_Encoder_Start_IT(&htim4,TIM_CHANNEL_ALL);
-	//HAL_TIM_Encoder_Start_IT(&htim5,TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start_IT(&htim1,TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start_IT(&htim2,TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start_IT(&htim3,TIM_CHANNEL_ALL);
+	//HAL_TIM_Encoder_Start_IT(&htim4,TIM_CHANNEL_ALL);
 	//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-	HAL_TIM_Base_Start_IT(&htim3);
-	HAL_TIM_Base_Start_IT(&htim6);
+//	HAL_TIM_Base_Start_IT(&htim3);
+	//HAL_TIM_Base_Start_IT(&htim6);
 //	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
 //	TIM4->CNT = 11;
 //	encoder_reading_wheel = 11;
@@ -200,9 +201,8 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	//Initialize_MPUs();
-	Initialize_Steppers();
-	
-	//MPU6050_Initialize(&MPU1);
+	//Initialize_Steppers();
+
 		//HAL_TIM_Base_Start_IT(&htim1);
 		//TIM1->CNT = 0;
 	//MPU_GYRO_CAL_Y(&MPU1);
@@ -210,10 +210,6 @@ int main(void)
 	//throttel_left = -10;
   while (1)
   {
-		Rotor.throttel = 30;
-		Left_Right.throttel = 30;
-		First_Arm.throttel = 30;
-		Second_Arm.throttel = 30;
 		//set_rotor_angle(20);
 		//MPU_GET_VALUE(&MPU1);
 //		checker = MPU1.Angle;
@@ -311,6 +307,7 @@ int main(void)
 			}
 	*/
   /* USER CODE END WHILE */
+}
 
   /* USER CODE BEGIN 3 */
 
@@ -318,7 +315,6 @@ int main(void)
   /* USER CODE END 3 */
 
 }
-	}
 
 /** System Clock Configuration
 */
@@ -381,7 +377,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if(htim->Instance == TIM3)
 	{
 		//HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
-		if(calibrated == CALIBRATING)
+		/*if(calibrated == CALIBRATING)
 		{
 			set_rotor_angle(setting);
 			if(current_angle >=31)
@@ -393,7 +389,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 		else if (calibrated == TRUE)
 			set_rotor_angle(setting);
-			
+			*/
 		
 		Pulse_Width_Calculator(&Rotor);
 		Pulse_Width_Calculator(&Left_Right);
