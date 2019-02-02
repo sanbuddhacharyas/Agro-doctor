@@ -49,7 +49,7 @@ typedef struct {
 	float Gyroscope_Z;     /*!< Gyroscope value Z axis */
 	float Temperature;       /*!< Temperature in degrees */
 	float Accel_Angle;
-	float Angle;
+	int Angle;
 } MPU6050;
 
 void MPU6050_Initialize(MPU6050* Datastruct);

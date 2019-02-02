@@ -122,10 +122,10 @@ int fputc(int ch, FILE *f)
 	uint32_t encoder_wheel_state=0;
 	uint32_t reading_pre=0;
 	float angle;
-	int ds = 0 ,my_angle = 20 ;
+	int ds = 0 ,my_angle = 20 , my_angle1;
 	char str[30];
 	char tx_data[100];
-	float checker;
+	int checker = 0;
 	int setting = 0;
 	extern float current_angle;
 	extern int calibrated;
@@ -222,8 +222,8 @@ int main(void)
 		//MPU_GET_VALUE(&MPU1);
 //		checker = MPU1.Angle;
 //	PID_calculate(&MPU1,&MOTOR_1,setting);
-		sprintf(tx_data,"Angle1: %f , Angle2: %f\r\n",MPU1.Angle , MPU2.Angle);
-		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
+		//sprintf(tx_data,"Angle1: %f , Angle2: %f\r\n",MPU1.Angle , MPU2.Angle);
+		//HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
 	//	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
 //		sprintf(tx_data,"Angle: %f , Setpoint: %d , error: %f , throttel: %d\r\n",MPU1.Angle , MOTOR_1.setpoint,MOTOR_1.pid_error , MOTOR_1.throttel);
 //		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
@@ -427,7 +427,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
 		}		*/
 			set_angle(my_angle,NULL);
-			
 	}
 	
 	if(htim->Instance == TIM9)			//Angle Calculator(4 ms)
@@ -479,19 +478,51 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			else if(receive == 6)
 				d_scalar -= 0.1;
 		
-		  if(uart_rx == 's' )
+		   if(uart_rx == 'm' )
 			{
-				for(int i=0;i<range;i++)
+				if(receive_buffer[0] == '-' - 48)
+					checker = 1;
+				else
+					checker = 0;
+					
+				for(int i=checker;i<range;i++)
 				{
 					buff_sum = buff_sum*10 + receive_buffer[i];
-					
 				}
-				forward_speed = buff_sum;
-				//speed_memory= 100;
+				my_angle1 = buff_sum;
+				if(receive_buffer[0] == '-' - 48)
+					my_angle1 = (-1)*my_angle1;
 
 				buff_sum =0;
 				range =0;
 			}
+			
+			 if(uart_rx == 'n' )
+			{
+				if(receive_buffer[0] == '-' - 48)
+					checker = 1;
+				else
+					checker = 0;
+					
+				for(int i=checker;i<range;i++)
+				{
+					buff_sum = buff_sum*10 + receive_buffer[i];
+				}
+				my_angle = buff_sum;
+				if(receive_buffer[0] == '-' - 48)
+					my_angle = (-1)*my_angle;
+
+				buff_sum =0;
+				range =0;
+			}
+		/*	 if(uart_rx == 'i' )				//This calculates the negative part of the value
+			{
+				my_angle = abs(my_angle);
+				my_angle = (-1)*my_angle;
+				
+				buff_sum =0;
+				range =0;
+			}*/
 			
 			 else if(uart_rx == 'f' )
 			{
@@ -531,7 +562,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				range =0;
 			}
 			
-		  else if(uart_rx == '.')
+		 /* else if(uart_rx == '.')
 			{
 				for(int i=0;i<range;i++)
 				{
@@ -541,7 +572,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				rec = buff_sum;
 				range =0;
 				buff_sum =0;
-			}
+			}*/
 			else if(uart_rx == 'u')
 			{
 				rec = uart_rx;
@@ -559,6 +590,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			
 			else
 			{
+				//if((receive!= '.' - 48)&&(receive!= '0' - 48)&&(receive!= '-' - 48))
 			  receive_buffer[range++] = receive;
 			}
 
