@@ -35,8 +35,12 @@ MOTOR 4(Second_Arm):	STEP = PB4
 #define STEPPER_FIRST_ARM_DIRECTION GPIO_PIN_5
 #define STEPPER_SECOND_ARM_DIRECTION GPIO_PIN_5
 
+#define sig_port GPIOD
+#define sig1 GPIO_PIN_5
+#define sig2 GPIO_PIN_6
 #define HIGH GPIO_PIN_SET
 #define LOW  GPIO_PIN_RESET
+
 #define Right 1
 #define Left 0
 #define Front 1

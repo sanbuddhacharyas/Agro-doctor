@@ -122,11 +122,11 @@ int fputc(int ch, FILE *f)
 	uint32_t encoder_wheel_state=0;
 	uint32_t reading_pre=0;
 	float angle;
-	int ds = 0 ,my_angle = 20 , my_angle1;
+	int ds = 0 ,my_angle1 = 0 , my_angle2 = 0 ,my_angle = 0 ,temp_angle = 0 , set_arm_first = 55 , set_arm_second = 0;
 	char str[30];
 	char tx_data[100];
 	int checker = 0;
-	int setting = 0;
+	int setting =0;
 	extern float current_angle;
 	extern int calibrated;
 	extern int current_encoder_reading;
@@ -185,6 +185,7 @@ int main(void)
   MX_TIM4_Init();
   MX_TIM5_Init();
   MX_TIM9_Init();
+  MX_TIM8_Init();
 
   /* USER CODE BEGIN 2 */
 	HAL_TIM_Encoder_Start_IT(&htim1,TIM_CHANNEL_ALL);
@@ -193,31 +194,32 @@ int main(void)
 	HAL_TIM_Base_Start_IT(&htim4);
 	HAL_TIM_Base_Start_IT(&htim5);
 	HAL_TIM_Base_Start_IT(&htim9);
-	//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_3);
 	//HAL_TIM_Base_Start_IT(&htim6);
 	HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx ,1 );
-//	TIM4->CNT = 11;
-//	encoder_reading_wheel = 11;
-//	encoder_reading_pre =11;
-//	direction_left_right =0 ;
+	TIM1->CNT = 11;
+	encoder_reading_wheel = 11;
+	encoder_reading_pre =11;
+	direction_left_right =0 ;
 	TIM3->CNT = 5000;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	Initialize_MPUs();
 	Initialize_Steppers();
-
 		//HAL_TIM_Base_Start_IT(&htim1);
 		//TIM1->CNT = 0;
 	//MPU_GYRO_CAL_Y(&MPU1);
 	//Calibrate_Base();
-//	Rotor.throttel = -10;
+	//Rotor.throttel = -10;			//For base calibration
   while (1)
   {
-	//	Left_Right.throttel = 20;
-		//First_Arm.throttel = 20;
-		//Second_Arm.throttel = 20;
+	/*	Left_Right.throttel = 30;
+		HAL_Delay(7000);
+		Left_Right.throttel = -30;
+		HAL_Delay(7000);*/
+//		First_Arm.throttel = 20;
+//		Second_Arm.throttel = 20;
 		//set_rotor_angle(20);
 		//MPU_GET_VALUE(&MPU1);
 //		checker = MPU1.Angle;
@@ -381,6 +383,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM4)			//Stepper_Refresher(20us)
 	{
+		
+		/******************ROTOR CALCULATIONS*****************/
 		if(calibrated == CALIBRATING)
 		{
 			set_rotor_angle(setting);
@@ -395,41 +399,52 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		else if (calibrated == TRUE)
 			set_rotor_angle(setting);
 		
+		/******************ROTOR CALCULATIONS*****************/
+		
 	  Pulse_Width_Calculator(&Rotor);
 		Pulse_Width_Calculator(&Left_Right);
 		Pulse_Width_Calculator(&First_Arm);
 		Pulse_Width_Calculator(&Second_Arm);
 	}
-
+	
 	//PID For motor
 	if(htim->Instance == TIM5)				//PID Refresher(1ms)
 	{
-		/*_pid = pid(ds, 1000, 0 );
+		PID_calculate(&Left_Right,set_arm_first,my_angle2);
+		PID_calculate(&First_Arm,set_arm_second,my_angle1);
+		
+		/*******************WHEEL CALCULATIONS**************************/
+		_pid = pid(ds, 1000, 0 );
 	
 		if (_pid > 0 )
 		{
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
 			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
-			htim2.Instance->CCR1 = 600;
-			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+			htim8.Instance->CCR3 = 450;
+			HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_3);
 		}
 		else if (_pid < 0 )
 		{
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_SET);
-			htim2.Instance->CCR1 = 600;
-			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+			htim8.Instance->CCR3 = 450;
+			HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_3);
 		}
 		else
 		{
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
-			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
-		}		*/
-			set_angle(my_angle,NULL);
+			HAL_TIM_PWM_Stop(&htim8,TIM_CHANNEL_3);
+		}		
+		
+		/*******************WHEEL CALCULATIONS**************************/
+		
+			/*******************LEFT_RIGHT CALCULATIONS**************************/
+		//	set_angle(my_angle,NULL);
+			/*******************LEFT_RIGHT CALCULATIONS**************************/
 	}
 	
-	if(htim->Instance == TIM9)			//Angle Calculator(4 ms)
+	/*if(htim->Instance == TIM9)			//Angle Calculator(4 ms)
 	{
 	  MPU_SHOW_DATA(&MPU1);			//This will give raw data(CAution!!!!!)
 		 //MPU_SHOW_DATA(&MPU2);			//This will give raw data(CAution!!!!!)
@@ -453,7 +468,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 //		sprintf(string,"Angle ->%f\r\n",MPU1.Angle);
 //	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
-	}		
+	}	*/	
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
@@ -478,7 +493,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			else if(receive == 6)
 				d_scalar -= 0.1;
 		
-		   if(uart_rx == 'm' )
+		  if(uart_rx == 'm' )
 			{
 				if(receive_buffer[0] == '-' - 48)
 					checker = 1;
@@ -508,9 +523,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				{
 					buff_sum = buff_sum*10 + receive_buffer[i];
 				}
-				my_angle = buff_sum;
+				temp_angle = buff_sum;
 				if(receive_buffer[0] == '-' - 48)
-					my_angle = (-1)*my_angle;
+					temp_angle = (-1)*temp_angle;
+				
+				temp_angle = temp_angle%1000;
+				temp_angle = temp_angle%100;
+				my_angle2 = temp_angle;
 
 				buff_sum =0;
 				range =0;
@@ -535,33 +554,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				buff_sum =0;
 				range =0;
 			}
-			
-			 else if(uart_rx == 'x' )
-			{
-				for(int i=0;i<range;i++)
-				{
-					buff_sum = buff_sum*10 + receive_buffer[i];
-					
-				}
-				my_angle = buff_sum;
-
-				buff_sum =0;
-				range =0;
-			}
-			
-			 else if(uart_rx == 'y' )
-			{
-				for(int i=0;i<range;i++)
-				{
-					buff_sum = buff_sum*10 + receive_buffer[i];
-					
-				}
-				my_angle = (-1) * buff_sum;
-
-				buff_sum =0;
-				range =0;
-			}
-			
+		
 		 /* else if(uart_rx == '.')
 			{
 				for(int i=0;i<range;i++)
@@ -645,3 +638,4 @@ void assert_failed(uint8_t* file, uint32_t line)
 */ 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

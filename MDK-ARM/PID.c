@@ -1,10 +1,10 @@
 
 #include "PID.h"
 
-void PID_calculate(MPU6050* Datastruct,STEPPER* INFO ,int pid_setpoint)
+void PID_calculate(STEPPER* INFO ,int pid_setpoint , int updated_angle)
 	{
 		INFO->setpoint = pid_setpoint;
-		INFO->pid_error = (Datastruct->Angle)-pid_setpoint;
+		INFO->pid_error = updated_angle-pid_setpoint;
 	  INFO->proportional = INFO->pid_error * INFO->p_scalar;
 		//INFO->integral = 0;
 		INFO->integral += INFO->pid_error * INFO->i_scalar;

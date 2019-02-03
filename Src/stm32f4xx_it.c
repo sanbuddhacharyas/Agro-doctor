@@ -321,7 +321,6 @@ void TIM1_TRG_COM_TIM11_IRQHandler(void)
   /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_TRG_COM_TIM11_IRQn 1 */
-encoder_reading_wheel = TIM1->CNT;
   /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 1 */
 }
 
@@ -335,7 +334,62 @@ void TIM1_CC_IRQHandler(void)
   /* USER CODE END TIM1_CC_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_CC_IRQn 1 */
-encoder_reading_wheel = TIM1->CNT;
+	
+	total_encoder = c * fullcounter + (encoder_reading_wheel-10);
+	total_distance = distance_travelled( total_encoder);
+	
+	if(encoder_reading_wheel < TIM1->CNT)
+		
+		direction_wheel = Front;
+	else if(encoder_reading_wheel > TIM1->CNT)
+		direction_wheel = Back;
+	/*
+	if(c == 0)
+	{
+		if(encoder_reading_pre < 15 && encoder_reading_pre >10   && encoder_reading_pre < TIM4->CNT  )
+			encoder_wheel_state = 1;
+		
+		else if(encoder_reading_pre < (fullcounter) && encoder_reading_pre > (fullcounter -5) && encoder_reading_pre >TIM4->CNT)
+			encoder_wheel_state =0 ;
+		
+	}
+*/
+//	if(encoder_wheel_state == 1)
+//	{
+		if(encoder_reading_wheel > fullcounter && direction_wheel == Front)
+		{
+			c++;
+			TIM1->CNT =10;
+		}
+		
+		else if(encoder_reading_wheel < 10 && encoder_reading_wheel>0 && direction_wheel == Back )
+		{
+			if(c!=0 )
+				c--;	
+			TIM4->CNT = fullcounter;
+		}
+		encoder_reading_wheel = TIM1->CNT;
+	//}
+	/*
+	else
+	{
+		if((-encoder_reading_wheel) > fullcounter && direction_wheel == Back)
+		{
+			c--;
+			TIM4->CNT = 10;
+		}
+		else if( -encoder_reading_wheel < 10 && -encoder_reading_wheel>0 && direction_wheel == Front )
+		{
+			c++;
+			TIM4->CNT = fullcounter;
+		}
+		
+		encoder_reading_wheel = -(fullcounter - TIM4->CNT);
+	}
+		*/
+	
+	
+	
   /* USER CODE END TIM1_CC_IRQn 1 */
 }
 

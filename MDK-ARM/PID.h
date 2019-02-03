@@ -11,7 +11,7 @@
 #include "mpu6050.h"
 
 
-void PID_calculate(MPU6050* Datastruct,STEPPER* INFO ,int pid_setpoint);
+void PID_calculate(STEPPER* INFO ,int pid_setpoint ,  int updated_angle);
 void Pulse_Width_Calculator(STEPPER* INFO);
 
 

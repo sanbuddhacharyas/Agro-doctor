@@ -56,40 +56,36 @@ float left_right_angle()
 
 void move(uint32_t distance, float velocity,int dir)
 {
-	/*if(dir == Front)
+	if(dir == Front)
 	{
 		while(distance > encoder_reading_wheel )
 		{
-	
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
 			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
-			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
-			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+			htim8.Instance->CCR3 = (int)((20 - forward_speed) * (2800 / 17));
+			HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_3);
 		}	
-	
 	}
 	
 	if(dir == Back)
 	{
 		while(distance > encoder_reading_wheel)
 		{
-		
+	
 			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_SET);
-			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
-			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+			htim8.Instance->CCR3 = (int)((20 - forward_speed) * (2800 / 17));
+			HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_3);
 				
 		}
-	
-	
-	}	
-	TIM4->CNT = 0;
+	}	 
+	TIM1->CNT = 0;
 	encoder_reading_wheel = 0;
 	encoder_reading_pre = 0;
-	HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(&htim8,TIM_CHANNEL_3);
 	HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
-			*/
+			
 }
 
 void set_angle(float ang,uint8_t direction)
@@ -181,6 +177,7 @@ void Initialize_Steppers(void)
 		
 		Left_Right.Signal = STEPPER_LEFT_RIGHT_SIGNAL;
 		Left_Right.Direction = STEPPER_LEFT_RIGHT_DIRECTION;
+		Left_Right.p_scalar = 25;
 		
 		First_Arm.Signal = STEPPER_FIRST_ARM_SIGNAL;
 		First_Arm.Direction = STEPPER_FIRST_ARM_DIRECTION;
