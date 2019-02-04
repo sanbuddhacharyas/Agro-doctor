@@ -22,6 +22,8 @@ agro_doctorf4\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f
 agro_doctorf4\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h
 agro_doctorf4\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h
 agro_doctorf4\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h
+agro_doctorf4\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h
+agro_doctorf4\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h
 agro_doctorf4\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h
 agro_doctorf4\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h
 agro_doctorf4\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h

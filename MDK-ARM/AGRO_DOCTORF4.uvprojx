@@ -336,7 +336,7 @@
               <MiscControls>--C99</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;                             ../Drivers/STM32F4xx_HAL_Driver/Inc;                             ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;                             ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;                             ../Drivers/CMSIS/Include;                             ..\Inc;                             ..\MDK-ARM</IncludePath>
+              <IncludePath>../Inc;                                ../Drivers/STM32F4xx_HAL_Driver/Inc;                                ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;                                ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;                                ../Drivers/CMSIS/Include;                                ..\Inc;                                ..\MDK-ARM</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -465,6 +465,16 @@
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f4xx_hal_adc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -539,6 +549,11 @@
               <FileName>mpu6050.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\mpu6050.h</FilePath>
+            </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/adc.c</FilePath>
             </File>
           </Files>
         </Group>

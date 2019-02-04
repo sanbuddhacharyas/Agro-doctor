@@ -39,6 +39,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
+#include "adc.h"
 #include "i2c.h"
 #include "tim.h"
 #include "usart.h"
@@ -93,15 +94,16 @@ int fputc(int ch, FILE *f)
   volatile int forward_speed = 16;
 	int _pid , turning_pid;
 	int buffer[30];
-	uint8_t uart_rx;
-	long int uart_buffer;
+	uint8_t uart_rx2 , uart_rx3;
+	long int uart_buffer2 , uart_buffer3;
 	int speed_counter=0;
 	volatile uint16_t encoder_reading_pre =0;
 	volatile int total_distance ;
 	 float p_scalar =15, i_scalar = 0, d_scalar=40;
 
-	int receive_buffer[15] ={0};
-	int receive =0 ,rec=0;
+	int receive_buffer2[15] ={0};
+	int receive_buffer3[15] ={0};
+	int receive2 =0 , receive3 = 0 ,rec=0;
 	int range =0;
 	int buff_sum=0;
 	uint8_t data;
@@ -121,8 +123,8 @@ int fputc(int ch, FILE *f)
 	uint32_t distance = 0;
 	uint32_t encoder_wheel_state=0;
 	uint32_t reading_pre=0;
-	float angle;
-	int ds = 0 ,my_angle1 = 0 , my_angle2 = 0 ,my_angle = 0 ,temp_angle = 0 , set_arm_first = 55 , set_arm_second = 0;
+	float angle , humid_percentage = 0;
+	int ds = 0 ,my_angle1 = 0 , my_angle2 = 0 ,my_angle = 0 ,temp_angle = 0 , set_arm_first = 55 , set_arm_second = 0 , adc_value = 0;
 	char str[30];
 	char tx_data[100];
 	int checker = 0;
@@ -186,6 +188,7 @@ int main(void)
   MX_TIM5_Init();
   MX_TIM9_Init();
   MX_TIM8_Init();
+  MX_ADC1_Init();
 
   /* USER CODE BEGIN 2 */
 	HAL_TIM_Encoder_Start_IT(&htim1,TIM_CHANNEL_ALL);
@@ -195,8 +198,10 @@ int main(void)
 	HAL_TIM_Base_Start_IT(&htim5);
 	HAL_TIM_Base_Start_IT(&htim9);
 	HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_3);
+	HAL_ADC_Start_IT(&hadc1);
 	//HAL_TIM_Base_Start_IT(&htim6);
-	HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx ,1 );
+	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx2 ,1 );
+	HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx3 ,1 );
 	TIM1->CNT = 11;
 	encoder_reading_wheel = 11;
 	encoder_reading_pre =11;
@@ -214,6 +219,9 @@ int main(void)
 	//Rotor.throttel = -10;			//For base calibration
   while (1)
   {
+	//	HAL_ADC_PollForConversion(&hadc1, 10);
+	//	adc_value = HAL_ADC_GetValue(&hadc1);
+		
 	/*	Left_Right.throttel = 30;
 		HAL_Delay(7000);
 		Left_Right.throttel = -30;
@@ -410,8 +418,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	//PID For motor
 	if(htim->Instance == TIM5)				//PID Refresher(1ms)
 	{
-		PID_calculate(&Left_Right,set_arm_first,my_angle2);
-		PID_calculate(&First_Arm,set_arm_second,my_angle1);
+		PID_calculate(&First_Arm,set_arm_first,my_angle1);
+		PID_calculate(&Second_Arm,set_arm_second,my_angle2);
 		
 		/*******************WHEEL CALCULATIONS**************************/
 		_pid = pid(ds, 1000, 0 );
@@ -471,125 +479,169 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	}	*/	
 }
 
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+	  while((HAL_ADC_PollForConversion(&hadc1, 10)) != HAL_OK);
+		adc_value = 4095-HAL_ADC_GetValue(&hadc1);
+		humid_percentage = adc_value/40.95;
+	  HAL_ADC_Start_IT(&hadc1);
+}
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if(huart->Instance == USART3)
+	if(huart->Instance == USART2)
 	{
-			receive = uart_rx - 48;
-			if(receive == 1)
+			receive2 = uart_rx2 - 48;
+		  if(uart_rx2 == 'p' )				//angle1
 			{
-				p_scalar += 0.1;
-				
-			}
-			else if(receive == 2)
-			{
-				p_scalar = p_scalar - 0.1;
-			}
-			else if(receive == 5)
-			{
-				d_scalar += 0.1;
-			}
-			
-			else if(receive == 6)
-				d_scalar -= 0.1;
-		
-		  if(uart_rx == 'm' )
-			{
-				if(receive_buffer[0] == '-' - 48)
+				if(receive_buffer2[0] == '-' - 48)
 					checker = 1;
 				else
 					checker = 0;
 					
 				for(int i=checker;i<range;i++)
 				{
-					buff_sum = buff_sum*10 + receive_buffer[i];
+					buff_sum = buff_sum*10 + receive_buffer2[i];
+				}
+				set_arm_first = buff_sum;
+				if(receive_buffer2[0] == '-' - 48)
+					set_arm_first = (-1)*set_arm_first;
+
+				buff_sum =0;
+				range =0;
+			}
+			
+			 else if(uart_rx2 == 'q' )				//angle2
+			{
+				if(receive_buffer2[0] == '-' - 48)
+					checker = 1;
+				else
+					checker = 0;
+					
+				for(int i=checker;i<range;i++)
+				{
+					buff_sum = buff_sum*10 + receive_buffer2[i];
+				}
+					set_arm_second = buff_sum;
+				if(receive_buffer2[0] == '-' - 48)
+					set_arm_second = (-1)*set_arm_second;
+
+				buff_sum =0;
+				range =0;
+			}
+			
+			else  if(uart_rx2 == 'r' )				//rotor
+			{
+				if(receive_buffer2[0] == '-' - 48)
+					checker = 1;
+				else
+					checker = 0;
+					
+				for(int i=checker;i<range;i++)
+				{
+					buff_sum = buff_sum*10 + receive_buffer2[i];
+				}
+				setting = buff_sum;
+				if(receive_buffer2[0] == '-' - 48)
+					setting = (-1)*setting;
+				
+				buff_sum =0;
+				range =0;
+			}
+			
+			else if(uart_rx2 == 'd' )				//distance
+			{
+				if(receive_buffer2[0] == '-' - 48)
+					checker = 1;
+				else
+					checker = 0;
+					
+				for(int i=checker;i<range;i++)
+				{
+					buff_sum = buff_sum*10 + receive_buffer2[i];
+				}
+				ds = buff_sum;
+				if(receive_buffer2[0] == '-' - 48)
+					ds = (-1)*ds;
+
+				buff_sum =0;
+				range =0;
+			}
+			
+			else if(uart_rx2 == 'l' )				//left_right
+			{
+				if(receive_buffer2[0] == '-' - 48)
+					checker = 1;
+				else
+					checker = 0;
+					
+				for(int i=checker;i<range;i++)
+				{
+					buff_sum = buff_sum*10 + receive_buffer2[i];
+				}
+				my_angle = buff_sum;
+				if(receive_buffer2[0] == '-' - 48)
+					my_angle = (-1)*my_angle;
+
+				buff_sum =0;
+				range =0;
+			}
+			else
+			{
+			  receive_buffer2[range++] = receive2;
+			}
+				HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx2 ,1 );
+	}
+	
+	if(huart->Instance == USART3)
+	{
+			receive3 = uart_rx3 - 48;
+		  if(uart_rx3 == 'm' )
+			{
+				if(receive_buffer3[0] == '-' - 48)
+					checker = 1;
+				else
+					checker = 0;
+					
+				for(int i=checker;i<range;i++)
+				{
+					buff_sum = buff_sum*10 + receive_buffer3[i];
 				}
 				my_angle1 = buff_sum;
-				if(receive_buffer[0] == '-' - 48)
+				if(receive_buffer3[0] == '-' - 48)
 					my_angle1 = (-1)*my_angle1;
 
 				buff_sum =0;
 				range =0;
 			}
 			
-			 if(uart_rx == 'n' )
+			if(uart_rx3 == 'n' )
 			{
-				if(receive_buffer[0] == '-' - 48)
+				if(receive_buffer3[0] == '-' - 48)
 					checker = 1;
 				else
 					checker = 0;
 					
 				for(int i=checker;i<range;i++)
 				{
-					buff_sum = buff_sum*10 + receive_buffer[i];
+					buff_sum = buff_sum*10 + receive_buffer3[i];
 				}
-				temp_angle = buff_sum;
-				if(receive_buffer[0] == '-' - 48)
-					temp_angle = (-1)*temp_angle;
-				
-				temp_angle = temp_angle%1000;
-				temp_angle = temp_angle%100;
-				my_angle2 = temp_angle;
-
-				buff_sum =0;
-				range =0;
-			}
-		/*	 if(uart_rx == 'i' )				//This calculates the negative part of the value
-			{
-				my_angle = abs(my_angle);
-				my_angle = (-1)*my_angle;
+				my_angle2 = buff_sum;
+				if(receive_buffer3[0] == '-' - 48)
+					my_angle2 = (-1)*my_angle2;
 				
 				buff_sum =0;
 				range =0;
-			}*/
-			
-			 else if(uart_rx == 'f' )
-			{
-				for(int i=0;i<range;i++)
-				{
-					buff_sum = buff_sum*10 + receive_buffer[i];
-				}
-				ds = buff_sum;
-
-				buff_sum =0;
-				range =0;
 			}
-		
-		 /* else if(uart_rx == '.')
-			{
-				for(int i=0;i<range;i++)
-				{
-					buff_sum = buff_sum*10 + receive_buffer[i];
-					
-				}
-				rec = buff_sum;
-				range =0;
-				buff_sum =0;
-			}*/
-			else if(uart_rx == 'u')
-			{
-				rec = uart_rx;
-			}
-			else if(uart_rx == 'd')
-			{
-				rec = uart_rx;
-			}
-			
-			else if(uart_rx == 'e')
-			{
-					rec = uart_rx;
-			
-			}
-			
 			else
 			{
-				//if((receive!= '.' - 48)&&(receive!= '0' - 48)&&(receive!= '-' - 48))
-			  receive_buffer[range++] = receive;
+				//if((receive3!= '.' - 48)&&(receive3!= '0' - 48)&&(receive3!= '-' - 48))
+			  receive_buffer3[range++] = receive3;
 			}
 
-				HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx ,1 );
+				HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx3 ,1 );
 	}
-
 }
 
 /* USER CODE END 4 */
@@ -638,4 +690,3 @@ void assert_failed(uint8_t* file, uint32_t line)
 */ 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
