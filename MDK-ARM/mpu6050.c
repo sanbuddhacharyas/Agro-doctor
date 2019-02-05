@@ -12,7 +12,7 @@ float Xg=0,Yg=0,Zg=0;
 double cal,cal1;
 float angle_gyro=0,del_x;
 int set_gyro_angle = 0;
-char string[100];
+char string[150];
 
 extern MPU6050 MPU1;
 extern MPU6050 MPU2;
@@ -28,6 +28,12 @@ extern I2C_HandleTypeDef hi2c2;
 //void MPU6050_Initialize(I2C_HandleTypeDef* I2Cx,MPU6050* Datastruct)
 void MPU6050_Initialize(MPU6050* Datastruct)
 {
+	I2C_HandleTypeDef I2Cx;
+	if(Datastruct->I2C_Port == 1)
+		I2Cx = hi2c1;
+	else if(Datastruct->I2C_Port == 2)
+		I2Cx = hi2c2;
+	
 	uint8_t temp;
 	char string[50] ;
 	uint8_t buffer[2]={SMPLRT_DIV,0x07};//Gyroscope output value is 8KHZ so sample rate is 1KHz
@@ -93,6 +99,12 @@ while(HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,2,0x
 
 void MPU_GET_VALUE(MPU6050* Datastruct)
 {
+	I2C_HandleTypeDef I2Cx;
+	if(Datastruct->I2C_Port == 1)
+		I2Cx = hi2c1;
+	else if(Datastruct->I2C_Port == 2)
+		I2Cx = hi2c2;
+	
 	uint8_t data[14];
 	uint8_t buffer=ACCEL_XOUT_H;
 	HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,1,0xFFFF);
@@ -126,16 +138,15 @@ void MPU_GYRO_CAL_Y(MPU6050* Datastruct)
 	Datastruct->Gyro_Cal_Y/=0xFFFF;
 }
 
-
 void MPU_SHOW_DATA(MPU6050* Datastruct)
 {
      MPU_GET_VALUE(Datastruct);
 	
-//		sprintf(string,"Accelerometer_X = %f , Accelerometer_Y = %f , Accelerometer_Z = %f\r\n",
-//		Datastruct->Accelerometer_X,Datastruct->Accelerometer_Y,Datastruct->Accelerometer_Z);
+//	  sprintf(string,"Data of %d MPU:\r\nAccelerometer_X = %f , Accelerometer_Y = %f , Accelerometer_Z = %f\r\n",
+//		Datastruct->I2C_Port,Datastruct->Accelerometer_X,Datastruct->Accelerometer_Y,Datastruct->Accelerometer_Z);
 //	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
-	
-	//		sprintf(string,"Gyroscope_X = %f , Gyroscope_Y = %f , Gyroscope_Z = %f\r\n",
+//	
+//		sprintf(string,"Gyroscope_X = %f , Gyroscope_Y = %f , Gyroscope_Z = %f\r\n",
 //		Datastruct->Gyroscope_X,Datastruct->Gyroscope_Y,Datastruct->Gyroscope_Z);
 //	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
 }
@@ -143,12 +154,12 @@ void MPU_SHOW_DATA(MPU6050* Datastruct)
 void Initialize_MPUs(void)
 {
 	MPU1.Address = mpu1_address;
-	MPU2.Address = mpu2_address;
-	MPU3.Address = mpu3_address;
+//	MPU2.Address = mpu2_address;
+	//MPU3.Address = mpu3_address;
 	
-	MPU1.I2C_Port = &hi2c1;
-	MPU1.I2C_Port = &hi2c1;
-	MPU3.I2C_Port = &hi2c1;
+	MPU1.I2C_Port = 1;
+//	MPU2.I2C_Port = 2;
+	//MPU3.I2C_Port = 2;
 	
 	MPU6050_Initialize(&MPU1);
 	//MPU6050_Initialize(&MPU2);

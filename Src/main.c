@@ -80,52 +80,6 @@ int fputc(int ch, FILE *f)
 	ITM_SendChar(ch);
 	return(ch);
 }
-	/*int throttel_left_counter=0 , throttle_counter_right_motor , throttel_previous_memory , throttel_left,throttel_right,left_motor,right_motor,throttle_right_motor_memory;
-  volatile int forward_speed = 16;
-	int _pid , turning_pid;
-	int buffer[30];
-	uint8_t uart_rx2 , uart_rx3;
-	long int uart_buffer2 , uart_buffer3;
-	int speed_counter=0;
-	volatile uint16_t encoder_reading_pre =0;
-	volatile int total_distance ;
-	 float p_scalar =15, i_scalar = 0, d_scalar=40;
-
-	int receive_buffer2[15] ={0};
-	int receive_buffer3[15] ={0};
-	int receive2 =0 , receive3 = 0 ,rec=0;
-	int range =0;
-	int buff_sum=0;
-	uint8_t data;
-	uint32_t x =0;
-	uint8_t dt =5;
-	extern double cal,cal1;
-	extern int set_gyro_angle;
-	
-	char d[30] = "hello \r\n";
-	
-	volatile int32_t encoder_reading_wheel =0;
-	volatile uint32_t encoder_reading_left_right =0;
-	volatile float velocity= 0;
-	volatile uint8_t direction_wheel;
-	volatile uint8_t direction_left_right;
-	char encoder_buffer[20];
-	uint32_t distance = 0;
-	uint32_t encoder_wheel_state=0;
-	uint32_t reading_pre=0;
-	float angle , humid_percentage = 0;
-	int ds = 0 ,my_angle1 = 0 , my_angle2 = 0 ,my_angle = 0 ,temp_angle = 0 , set_arm_first = 55 , set_arm_second = 0 , adc_value = 0;
-	char str[30];
-	char tx_data[100];
-	int checker = 0;
-	int setting =0;
-	extern float current_angle;
-	extern int calibrated;
-	extern int current_encoder_reading;
-	#define TRUE 1
-	
-	#define CALIBRATING 3
-	*/
 
 /* USER CODE END PV */
 
@@ -202,6 +156,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	Initialize_Steppers();
+	Initialize_MPUs();
 		//HAL_TIM_Base_Start_IT(&htim1);
 		//TIM1->CNT = 0;
 	//MPU_GYRO_CAL_Y(&MPU1);
@@ -209,9 +164,9 @@ int main(void)
 	//Rotor.throttel = -10;			//For base calibration
   while (1)
   {
-	//	HAL_ADC_PollForConversion(&hadc1, 10);
-	//	adc_value = HAL_ADC_GetValue(&hadc1);
-		
+		//MPU_SHOW_DATA(&MPU1);
+		//MPU_SHOW_DATA(&MPU2);
+	//	MPU_SHOW_DATA(&MPU3);
 	/*	Left_Right.throttel = 30;
 		HAL_Delay(7000);
 		Left_Right.throttel = -30;
@@ -222,8 +177,8 @@ int main(void)
 		//MPU_GET_VALUE(&MPU1);
 //		checker = MPU1.Angle;
 //	PID_calculate(&MPU1,&MOTOR_1,setting);
-		//sprintf(tx_data,"Angle1: %f , Angle2: %f\r\n",MPU1.Angle , MPU2.Angle);
-		//HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
+		sprintf(tx_data,"Angle1: %d , Angle2: %d\r\n",MPU1.Angle , MPU2.Angle);
+		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
 	//	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
 //		sprintf(tx_data,"Angle: %f , Setpoint: %d , error: %f , throttel: %d\r\n",MPU1.Angle , MOTOR_1.setpoint,MOTOR_1.pid_error , MOTOR_1.throttel);
 //		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
@@ -442,31 +397,31 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			/*******************LEFT_RIGHT CALCULATIONS**************************/
 	}
 	
-	/*if(htim->Instance == TIM9)			//Angle Calculator(4 ms)
+	if(htim->Instance == TIM9)			//Angle Calculator(4 ms)
 	{
 	  MPU_SHOW_DATA(&MPU1);			//This will give raw data(CAution!!!!!)
-		 //MPU_SHOW_DATA(&MPU2);			//This will give raw data(CAution!!!!!)
+		 MPU_SHOW_DATA(&MPU2);			//This will give raw data(CAution!!!!!)
      MPU1.Angle += MPU1.Gyroscope_Y*0.004;		//As we require angle in milisecond basis
-		//MPU2.Angle += MPU2.Gyroscope_Y/1000;		//As we require angle in milisecond basis
+		MPU2.Angle += MPU2.Gyroscope_Y/1000;		//As we require angle in milisecond basis
 		 cal = sqrt(MPU1.Accelerometer_X*MPU1.Accelerometer_X+MPU1.Accelerometer_Y*MPU1.Accelerometer_Y+MPU1.Accelerometer_Z*MPU1.Accelerometer_Z);
-		//cal1 = sqrt(MPU2.Accelerometer_X*MPU2.Accelerometer_X+MPU2.Accelerometer_Y*MPU2.Accelerometer_Y+MPU2.Accelerometer_Z*MPU2.Accelerometer_Z);
+		cal1 = sqrt(MPU2.Accelerometer_X*MPU2.Accelerometer_X+MPU2.Accelerometer_Y*MPU2.Accelerometer_Y+MPU2.Accelerometer_Z*MPU2.Accelerometer_Z);
      MPU1.Accel_Angle = asin((float)MPU1.Accelerometer_X/cal)*RAD_TO_DEG;
-		 //MPU2.Accel_Angle = asin((float)MPU2.Accelerometer_X/cal1)*RAD_TO_DEG;
+		 MPU2.Accel_Angle = asin((float)MPU2.Accelerometer_X/cal1)*RAD_TO_DEG;
  
 		if(set_gyro_angle)
 		{
 	  MPU1.Angle = MPU1.Angle*0.96 +MPU1.Accel_Angle*0.04;
-		//MPU2.Angle = MPU2.Angle*0.96 +MPU2.Accel_Angle*0.04;
+		MPU2.Angle = MPU2.Angle*0.96 +MPU2.Accel_Angle*0.04;
 		}
 		else
 		{
 			MPU1.Angle = MPU1.Accel_Angle;
-		//	MPU2.Angle = MPU2.Accel_Angle;
+	   	MPU2.Angle = MPU2.Accel_Angle;
 			set_gyro_angle = 1;
 		}
 //		sprintf(string,"Angle ->%f\r\n",MPU1.Angle);
 //	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
-	}	*/	
+	}	
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)

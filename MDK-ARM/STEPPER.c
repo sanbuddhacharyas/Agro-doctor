@@ -17,6 +17,7 @@ float previous_error = 0;
 float derivative = 0;
 float left_right_error =0;
 float test , test1;
+char AVR_Data[50] = {0};
 
 extern volatile uint32_t encoder_reading_wheel;
 extern volatile uint32_t encoder_reading_left_right;
@@ -42,7 +43,7 @@ float distance_travelled(uint32_t encoder_reading_wheel)
 	
 }
 
-float left_right_angle() 
+float left_right_angle(void) 
 {
 	if(encoder_reading_left_right >1000)
 	{
@@ -144,7 +145,7 @@ int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode)
 			return 0;
 }
 
-float initial_angle()
+float initial_angle(void)
 {
 //	float ang;
 	//if(direction_left_right == Right)
@@ -195,6 +196,12 @@ void Calibrate_Base(void)
 {
 	throttel_left = -10;
 }
+
+void Send_Throttels_To_AVR(void)
+{
+	sprintf(AVR_Data,"%df%ds%dr",First_Arm.throttel , Second_Arm.throttel , Rotor.throttel);
+}
+	
 
 /*   After calibration, make the initial value as 5000.
 Calculate present position i.e. current angle everytime in f4xx_it.c by taking the difference of latest counts.*/

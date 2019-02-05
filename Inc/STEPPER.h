@@ -48,15 +48,16 @@ MOTOR 4(Second_Arm):	STEP = PB4
 #define fullcounter 8645
 void servo(int angle ,TIM_HandleTypeDef* htim);
 void pid_velocity(int distance);
-float left_right_angle();
+float left_right_angle(void);
 float distance_travelled(uint32_t encoder_reading_wheel);
 void move(uint32_t distance, float velocity,int direction);
 void set_angle(float angle,uint8_t direction);
 int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode);
 void set_rotor_angle(int ang);
-float initial_angle();
+float initial_angle(void);
 void Calibrate_Base(void);
 void Initialize_Steppers(void);
+void Send_Throttels_To_AVR(void);
 
 typedef struct {
 	GPIO_TypeDef * Port;

@@ -43,4 +43,6 @@ void Pulse_Width_Calculator(STEPPER* INFO)
 		else if(INFO->throttel_counter == 2)HAL_GPIO_WritePin(INFO->Port, INFO->Signal , LOW); 
 		
 	}
+
+
 	

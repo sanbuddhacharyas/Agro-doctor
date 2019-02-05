@@ -38,7 +38,7 @@ typedef enum {
 typedef struct {
 	/* Private */
 	uint8_t Address;         /*!< I2C address of device. Only for private use */
-	I2C_HandleTypeDef* I2C_Port;
+	int I2C_Port;
 	/* Public */
 	float Accelerometer_X; /*!< Accelerometer value X axis */
 	float Accelerometer_Y; /*!< Accelerometer value Y axis */
