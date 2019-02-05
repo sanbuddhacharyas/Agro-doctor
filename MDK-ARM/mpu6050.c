@@ -38,7 +38,7 @@ void MPU6050_Initialize(MPU6050* Datastruct)
 	char string[50] ;
 	uint8_t buffer[2]={SMPLRT_DIV,0x07};//Gyroscope output value is 8KHZ so sample rate is 1KHz
 	
-  while(HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,2,0xFFFF) != HAL_OK)
+  while(HAL_I2C_Master_Transmit(&hi2c2,Datastruct->Address,(uint8_t *)&buffer,2,0xFFFF) != HAL_OK)
 	{
 		sprintf(string,"Initializing Sample_Rate Division\r\n");
 		HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
@@ -47,7 +47,7 @@ void MPU6050_Initialize(MPU6050* Datastruct)
 	
 	buffer[0] = PWR_MGMT_1;//Power Managment system
 	buffer[1] = 0x00;//Internal clock of 8MHz oscillator
- while(HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,2,0xFFFF) != HAL_OK)
+ while(HAL_I2C_Master_Transmit(&hi2c2,Datastruct->Address,(uint8_t *)&buffer,2,0xFFFF) != HAL_OK)
 	{
 		sprintf(string,"Initializing Power Mgmt\r\n");
 		HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
@@ -56,7 +56,7 @@ void MPU6050_Initialize(MPU6050* Datastruct)
 	//Configure
 	buffer[0] = CONFIG;
 	buffer[1] = 0x00;//Digital low pass filter Gyro = 8kHz
- while(HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,2,0xFFFF) != HAL_OK)
+ while(HAL_I2C_Master_Transmit(&hi2c2,Datastruct->Address,(uint8_t *)&buffer,2,0xFFFF) != HAL_OK)
 	{
 		sprintf(string,"Initializing Config\r\n");
 		HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
@@ -64,12 +64,12 @@ void MPU6050_Initialize(MPU6050* Datastruct)
 
 	//Configure Gyro
 	buffer[0] = GYRO_CONFIG;
-	while(HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,1,0xFFFF) != HAL_OK);
-	HAL_I2C_Master_Receive(&hi2c1,Datastruct->Address,(uint8_t *)&temp,1,0xFFFF);
+	while(HAL_I2C_Master_Transmit(&hi2c2,Datastruct->Address,(uint8_t *)&buffer,1,0xFFFF) != HAL_OK);
+	HAL_I2C_Master_Receive(&hi2c2,Datastruct->Address,(uint8_t *)&temp,1,0xFFFF);
 	temp=(temp&0xE7)|0x00;
 	buffer[0] = 0x1B;
 	buffer[1] = temp; // 
-while(HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,2,0xFFFF) != HAL_OK)
+while(HAL_I2C_Master_Transmit(&hi2c2,Datastruct->Address,(uint8_t *)&buffer,2,0xFFFF) != HAL_OK)
 	{
 		sprintf(string,"Initializing Gyroscope\r\n");
 		HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
@@ -77,12 +77,12 @@ while(HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,2,0x
 	
 	//Configure Accelerometer 
 	buffer[0] = ACCEL_CONFIG;
-	while(HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,1,0xFFFF) != HAL_OK);
-	HAL_I2C_Master_Receive(&hi2c1,Datastruct->Address,(uint8_t *)&temp,1,0xFFFF);
+	while(HAL_I2C_Master_Transmit(&hi2c2,Datastruct->Address,(uint8_t *)&buffer,1,0xFFFF) != HAL_OK);
+	HAL_I2C_Master_Receive(&hi2c2,Datastruct->Address,(uint8_t *)&temp,1,0xFFFF);
 	temp=(temp&0xE7)|0x00;
 	buffer[0] = 0x1C;
 	buffer[1] = temp;	
-	while(HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,2,0xFFFF) != HAL_OK)
+	while(HAL_I2C_Master_Transmit(&hi2c2,Datastruct->Address,(uint8_t *)&buffer,2,0xFFFF) != HAL_OK)
 	{
 		sprintf(string,"Initializing Accelerometer\r\n");
 		HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
@@ -90,7 +90,7 @@ while(HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,2,0x
 	//Interrupt Enable
 	buffer[0] = INT_ENABLE;
 	buffer[1] = 0x01;
-while(HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,2,0xFFFF) != HAL_OK)
+while(HAL_I2C_Master_Transmit(&hi2c2,Datastruct->Address,(uint8_t *)&buffer,2,0xFFFF) != HAL_OK)
 	{
 		sprintf(string,"Initializing INT Enable\r\n");
 		HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
@@ -107,9 +107,9 @@ void MPU_GET_VALUE(MPU6050* Datastruct)
 	
 	uint8_t data[14];
 	uint8_t buffer=ACCEL_XOUT_H;
-	HAL_I2C_Master_Transmit(&hi2c1,Datastruct->Address,(uint8_t *)&buffer,1,0xFFFF);
+	HAL_I2C_Master_Transmit(&hi2c2,Datastruct->Address,(uint8_t *)&buffer,1,0xFFFF);
 	//HAL_Delay(20);
-	HAL_I2C_Master_Receive(&hi2c1,Datastruct->Address | 0x01 ,(uint8_t *)&data,14,0xFFFF);
+	HAL_I2C_Master_Receive(&hi2c2,Datastruct->Address | 0x01 ,(uint8_t *)&data,14,0xFFFF);
 	Datastruct->Accelerometer_X = (int16_t)(data[0] << 8 | data[1]);//2`s complements value to signed value value
 	Datastruct->Accelerometer_Y = (int16_t)(data[2] << 8 | data[3]);
 	Datastruct->Accelerometer_Z =(int16_t)(data[4] << 8 | data[5]);
@@ -154,14 +154,14 @@ void MPU_SHOW_DATA(MPU6050* Datastruct)
 void Initialize_MPUs(void)
 {
 	MPU1.Address = mpu1_address;
-//	MPU2.Address = mpu2_address;
+	MPU2.Address = mpu2_address;
 	//MPU3.Address = mpu3_address;
 	
 	MPU1.I2C_Port = 1;
-//	MPU2.I2C_Port = 2;
+	MPU2.I2C_Port = 2;
 	//MPU3.I2C_Port = 2;
 	
-	MPU6050_Initialize(&MPU1);
+	//MPU6050_Initialize(&MPU1);
 	//MPU6050_Initialize(&MPU2);
 	//MPU6050_Initialize(&MPU3);
 }

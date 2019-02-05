@@ -199,7 +199,7 @@ void Calibrate_Base(void)
 
 void Send_Throttels_To_AVR(void)
 {
-	sprintf(AVR_Data,"%df%ds%dr",First_Arm.throttel , Second_Arm.throttel , Rotor.throttel);
+	sprintf(AVR_Data,"%dp%dq%dr",First_Arm.throttel , Second_Arm.throttel , Rotor.throttel);
 }
 	
 

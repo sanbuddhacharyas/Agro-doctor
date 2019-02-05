@@ -177,8 +177,8 @@ int main(void)
 		//MPU_GET_VALUE(&MPU1);
 //		checker = MPU1.Angle;
 //	PID_calculate(&MPU1,&MOTOR_1,setting);
-		sprintf(tx_data,"Angle1: %d , Angle2: %d\r\n",MPU1.Angle , MPU2.Angle);
-		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
+		//sprintf(tx_data,"Angle1: %d , Angle2: %d\r\n",MPU1.Angle , MPU2.Angle);
+		//HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
 	//	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
 //		sprintf(tx_data,"Angle: %f , Setpoint: %d , error: %f , throttel: %d\r\n",MPU1.Angle , MOTOR_1.setpoint,MOTOR_1.pid_error , MOTOR_1.throttel);
 //		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
@@ -397,12 +397,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			/*******************LEFT_RIGHT CALCULATIONS**************************/
 	}
 	
-	if(htim->Instance == TIM9)			//Angle Calculator(4 ms)
+	if(htim->Instance == TIM9)			//Angle Calculator(5 ms)
 	{
-	  MPU_SHOW_DATA(&MPU1);			//This will give raw data(CAution!!!!!)
-		 MPU_SHOW_DATA(&MPU2);			//This will give raw data(CAution!!!!!)
-     MPU1.Angle += MPU1.Gyroscope_Y*0.004;		//As we require angle in milisecond basis
-		MPU2.Angle += MPU2.Gyroscope_Y/1000;		//As we require angle in milisecond basis
+	//  MPU_GET_VALUE(&MPU1);			//This will give raw data(CAution!!!!!)
+		MPU_GET_VALUE(&MPU2);			//This will give raw data(CAution!!!!!)
+    MPU1.Angle += MPU1.Gyroscope_Y*0.005;		//As we require angle in 5 milisecond basis(here)
+		MPU2.Angle += MPU2.Gyroscope_Y*0.005;		//As we require angle in 5 milisecond basis (here)
 		 cal = sqrt(MPU1.Accelerometer_X*MPU1.Accelerometer_X+MPU1.Accelerometer_Y*MPU1.Accelerometer_Y+MPU1.Accelerometer_Z*MPU1.Accelerometer_Z);
 		cal1 = sqrt(MPU2.Accelerometer_X*MPU2.Accelerometer_X+MPU2.Accelerometer_Y*MPU2.Accelerometer_Y+MPU2.Accelerometer_Z*MPU2.Accelerometer_Z);
      MPU1.Accel_Angle = asin((float)MPU1.Accelerometer_X/cal)*RAD_TO_DEG;
