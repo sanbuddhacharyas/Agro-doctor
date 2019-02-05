@@ -1,5 +1,5 @@
 	#ifndef VARIABLES_H_
-		#ifndef VARIABLES_H_
+	#define VARIABLES_H_
 	
 	int throttel_left_counter=0 , throttle_counter_right_motor , throttel_previous_memory , throttel_left,throttel_right,left_motor,right_motor,throttle_right_motor_memory;
   volatile int forward_speed = 16;
@@ -46,3 +46,5 @@
 	#define TRUE 1
 	
 	#define CALIBRATING 3
+	
+#endif

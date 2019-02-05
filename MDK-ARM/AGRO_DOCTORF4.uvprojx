@@ -555,6 +555,11 @@
               <FileType>1</FileType>
               <FilePath>../Src/adc.c</FilePath>
             </File>
+            <File>
+              <FileName>Headers.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Headers.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

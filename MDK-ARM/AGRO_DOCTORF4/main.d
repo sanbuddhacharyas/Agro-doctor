@@ -1,4 +1,5 @@
 agro_doctorf4\main.o: ../Src/main.c
+agro_doctorf4\main.o: ..\MDK-ARM\Headers.h
 agro_doctorf4\main.o: ../Inc/main.h
 agro_doctorf4\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
 agro_doctorf4\main.o: ../Inc/stm32f4xx_hal_conf.h
@@ -48,3 +49,4 @@ agro_doctorf4\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 agro_doctorf4\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
 agro_doctorf4\main.o: ..\MDK-ARM\MPU_RES_defines.h
 agro_doctorf4\main.o: ..\MDK-ARM\PID.h
+agro_doctorf4\main.o: ..\MDK-ARM\variables.h

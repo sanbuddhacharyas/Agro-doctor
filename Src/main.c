@@ -37,19 +37,9 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
-#include "stm32f4xx_hal.h"
-#include "adc.h"
-#include "i2c.h"
-#include "tim.h"
-#include "usart.h"
-#include "gpio.h"
+#include "Headers.h"
 
 /* USER CODE BEGIN Includes */
-#include "STEPPER.h"
-#include "string.h"
-#include "mpu6050.h"
-#include "PID.h"
 
 #define RAD_TO_DEG 57.295779513082320876798154814105
 #define PI 3.1415926535897932384626433832795
@@ -90,7 +80,7 @@ int fputc(int ch, FILE *f)
 	ITM_SendChar(ch);
 	return(ch);
 }
-	int throttel_left_counter=0 , throttle_counter_right_motor , throttel_previous_memory , throttel_left,throttel_right,left_motor,right_motor,throttle_right_motor_memory;
+	/*int throttel_left_counter=0 , throttle_counter_right_motor , throttel_previous_memory , throttel_left,throttel_right,left_motor,right_motor,throttle_right_motor_memory;
   volatile int forward_speed = 16;
 	int _pid , turning_pid;
 	int buffer[30];
@@ -135,7 +125,7 @@ int fputc(int ch, FILE *f)
 	#define TRUE 1
 	
 	#define CALIBRATING 3
-	
+	*/
 
 /* USER CODE END PV */
 
@@ -478,7 +468,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
 	}	*/	
 }
-
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
