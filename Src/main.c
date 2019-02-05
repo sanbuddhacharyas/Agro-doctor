@@ -156,7 +156,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	Initialize_Steppers();
-	Initialize_MPUs();
+	//Initialize_MPUs();
 		//HAL_TIM_Base_Start_IT(&htim1);
 		//TIM1->CNT = 0;
 	//MPU_GYRO_CAL_Y(&MPU1);
@@ -399,15 +399,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	
 	if(htim->Instance == TIM9)			//Angle Calculator(5 ms)
 	{
-	//  MPU_GET_VALUE(&MPU1);			//This will give raw data(CAution!!!!!)
-		MPU_GET_VALUE(&MPU2);			//This will give raw data(CAution!!!!!)
-    MPU1.Angle += MPU1.Gyroscope_Y*0.005;		//As we require angle in 5 milisecond basis(here)
-		MPU2.Angle += MPU2.Gyroscope_Y*0.005;		//As we require angle in 5 milisecond basis (here)
+	   MPU_GET_VALUE_I2C1(&MPU1);			//This will give raw data(CAution!!!!!)
+		 MPU_GET_VALUE_I2C2(&MPU2);			//This will give raw data(CAution!!!!!)
+     MPU1.Angle += MPU1.Gyroscope_Y*0.005;		//As we require angle in milisecond basis
+		 MPU2.Angle += MPU2.Gyroscope_Y*0.005;		//As we require angle in milisecond basis
 		 cal = sqrt(MPU1.Accelerometer_X*MPU1.Accelerometer_X+MPU1.Accelerometer_Y*MPU1.Accelerometer_Y+MPU1.Accelerometer_Z*MPU1.Accelerometer_Z);
-		cal1 = sqrt(MPU2.Accelerometer_X*MPU2.Accelerometer_X+MPU2.Accelerometer_Y*MPU2.Accelerometer_Y+MPU2.Accelerometer_Z*MPU2.Accelerometer_Z);
+		 cal1 = sqrt(MPU2.Accelerometer_X*MPU2.Accelerometer_X+MPU2.Accelerometer_Y*MPU2.Accelerometer_Y+MPU2.Accelerometer_Z*MPU2.Accelerometer_Z);
      MPU1.Accel_Angle = asin((float)MPU1.Accelerometer_X/cal)*RAD_TO_DEG;
 		 MPU2.Accel_Angle = asin((float)MPU2.Accelerometer_X/cal1)*RAD_TO_DEG;
- 
+
 		if(set_gyro_angle)
 		{
 	  MPU1.Angle = MPU1.Angle*0.96 +MPU1.Accel_Angle*0.04;
@@ -416,7 +416,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		else
 		{
 			MPU1.Angle = MPU1.Accel_Angle;
-	   	MPU2.Angle = MPU2.Accel_Angle;
+			MPU2.Angle = MPU2.Accel_Angle;
 			set_gyro_angle = 1;
 		}
 //		sprintf(string,"Angle ->%f\r\n",MPU1.Angle);

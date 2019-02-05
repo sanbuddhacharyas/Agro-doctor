@@ -52,10 +52,12 @@ typedef struct {
 	int Angle;
 } MPU6050;
 
-void MPU6050_Initialize(MPU6050* Datastruct);
-void MPU_GET_VALUE(MPU6050* Datastruct);
-void MPU_SHOW_DATA(MPU6050* Datastruct);
-void MPU_GYRO_CAL_Y(MPU6050* Datastruct);
+void MPU6050_Initialize_I2C1(MPU6050* Datastruct);
+void MPU6050_Initialize_I2C1(MPU6050* Datastruct);
+void MPU_GET_VALUE_I2C1(MPU6050* Datastruct);
+void MPU_GET_VALUE_I2C2(MPU6050* Datastruct);
+//void MPU_SHOW_DATA(MPU6050* Datastruct);
+//void MPU_GYRO_CAL_Y(MPU6050* Datastruct);
 void Initialize_MPUs(void);
 
 //MPU6050 MPU1 = {mpu2_address , &hi2c2};
