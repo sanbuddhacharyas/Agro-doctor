@@ -56,10 +56,6 @@
 #define Stepper2_Signal_GPIO_Port GPIOC
 #define Stepper2_Direction_Pin GPIO_PIN_15
 #define Stepper2_Direction_GPIO_Port GPIOC
-#define Left_Right_enco_2_Pin GPIO_PIN_1
-#define Left_Right_enco_2_GPIO_Port GPIOA
-#define Left_Right_enco_1_Pin GPIO_PIN_5
-#define Left_Right_enco_1_GPIO_Port GPIOA
 #define Rotor_enco_1_Pin GPIO_PIN_6
 #define Rotor_enco_1_GPIO_Port GPIOA
 #define Rotor_enco_2_Pin GPIO_PIN_7

@@ -19,7 +19,6 @@
 	int receive2 =0 , receive3 = 0 ,rec=0;
 	int range =0;
 	int buff_sum=0;
-	uint8_t data;
 	uint32_t x =0;
 	uint8_t dt =5;
 	extern double cal,cal1;
@@ -36,7 +35,7 @@
 	uint32_t distance = 0;
 	uint32_t encoder_wheel_state=0;
 	uint32_t reading_pre=0;
-	float angle , humid_percentage = 0;
+	float humid_percentage = 0;
 	int ds = 0 ,my_angle1 = 0 , my_angle2 = 0 ,my_angle = 0 ,temp_angle = 0 , set_arm_first = 55 , set_arm_second = 0 , adc_value = 0;
 	char str[30];
 	char tx_data[100];

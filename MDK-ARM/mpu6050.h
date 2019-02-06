@@ -1,6 +1,7 @@
 #ifndef MPU6050_H_
 #define MPU6050_H_
 
+
 #include "stm32f4xx_hal.h"
 #include "i2c.h"
 #include "usart.h"
@@ -45,23 +46,16 @@ typedef struct {
 	float Accelerometer_Z; /*!< Accelerometer value Z axis */
 	float Gyroscope_X;     /*!< Gyroscope value X axis */
 	float Gyroscope_Y;     /*!< Gyroscope value Y axis */
-	float Gyro_Cal_Y;
 	float Gyroscope_Z;     /*!< Gyroscope value Z axis */
 	float Temperature;       /*!< Temperature in degrees */
 	float Accel_Angle;
-	int Angle;
+	float Angle;
 } MPU6050;
 
-void MPU6050_Initialize_I2C1(MPU6050* Datastruct);
-void MPU6050_Initialize_I2C1(MPU6050* Datastruct);
-void MPU_GET_VALUE_I2C1(MPU6050* Datastruct);
-void MPU_GET_VALUE_I2C2(MPU6050* Datastruct);
-//void MPU_SHOW_DATA(MPU6050* Datastruct);
-//void MPU_GYRO_CAL_Y(MPU6050* Datastruct);
-void Initialize_MPUs(void);
-
-//MPU6050 MPU1 = {mpu2_address , &hi2c2};
-//MPU6050 MPU2 = {mpu2_address , &hi2c2};
+void MPU6050_Initialize(MPU6050* Datastruct);
+void MPU_GET_VALUE(MPU6050* Datastruct);
+void MPU_SHOW_DATA(MPU6050* Datastruct);
+void MPU_GYRO_CAL(void);
 
 #endif
 

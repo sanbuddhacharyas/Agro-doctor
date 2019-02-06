@@ -37,6 +37,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+#include "main.h"
 #include "Headers.h"
 
 /* USER CODE BEGIN Includes */
@@ -57,10 +58,10 @@
 /* Private variables ---------------------------------------------------------*/
 /*************Initializtions****************/
 
-	MPU6050 MPU1;
+	/*MPU6050 MPU1;
 	MPU6050 MPU2;
 	MPU6050 MPU3;
-	
+	*/
 	STEPPER Rotor;
 	STEPPER Left_Right;
 	STEPPER First_Arm;
@@ -93,6 +94,9 @@ void SystemClock_Config(void);
 
 /* USER CODE BEGIN 0 */
 
+MPU6050 MPU1 = {0xD2, 2};
+MPU6050 MPU2 = {0xD0 , 1};
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -122,8 +126,6 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_I2C2_Init();
-  MX_TIM1_Init();
-  MX_TIM2_Init();
   MX_TIM3_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
@@ -133,9 +135,11 @@ int main(void)
   MX_TIM9_Init();
   MX_TIM8_Init();
   MX_ADC1_Init();
+  MX_TIM1_Init();
+  MX_TIM2_Init();
 
   /* USER CODE BEGIN 2 */
-	HAL_TIM_Encoder_Start_IT(&htim1,TIM_CHANNEL_ALL);
+	/*HAL_TIM_Encoder_Start_IT(&htim1,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start_IT(&htim2,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start_IT(&htim3,TIM_CHANNEL_ALL);
 	HAL_TIM_Base_Start_IT(&htim4);
@@ -150,23 +154,24 @@ int main(void)
 	encoder_reading_wheel = 11;
 	encoder_reading_pre =11;
 	direction_left_right =0 ;
-	TIM3->CNT = 5000;
+	TIM3->CNT = 5000;*/
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	Initialize_Steppers();
-	//Initialize_MPUs();
+	//Initialize_Steppers();
+	HAL_Delay(200);
+	MPU6050_Initialize(&MPU1);
+	MPU6050_Initialize(&MPU2);
 		//HAL_TIM_Base_Start_IT(&htim1);
 		//TIM1->CNT = 0;
 	//MPU_GYRO_CAL_Y(&MPU1);
 	//Calibrate_Base();
 	//Rotor.throttel = -10;			//For base calibration
+	HAL_TIM_Base_Start_IT(&htim2);
+	TIM2->CNT = 0;
   while (1)
   {
-		//MPU_SHOW_DATA(&MPU1);
-		//MPU_SHOW_DATA(&MPU2);
-	//	MPU_SHOW_DATA(&MPU3);
 	/*	Left_Right.throttel = 30;
 		HAL_Delay(7000);
 		Left_Right.throttel = -30;
@@ -397,14 +402,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			/*******************LEFT_RIGHT CALCULATIONS**************************/
 	}
 	
-	if(htim->Instance == TIM9)			//Angle Calculator(5 ms)
+	if(htim->Instance == TIM2)			//Angle Calculator(5 ms)
 	{
-	   MPU_GET_VALUE_I2C1(&MPU1);			//This will give raw data(CAution!!!!!)
-		 MPU_GET_VALUE_I2C2(&MPU2);			//This will give raw data(CAution!!!!!)
-     MPU1.Angle += MPU1.Gyroscope_Y*0.005;		//As we require angle in milisecond basis
-		 MPU2.Angle += MPU2.Gyroscope_Y*0.005;		//As we require angle in milisecond basis
+	   MPU_SHOW_DATA(&MPU1);			//This will give raw data(CAution!!!!!)
+		 MPU_SHOW_DATA(&MPU2);			//This will give raw data(CAution!!!!!)
+     MPU1.Angle += MPU1.Gyroscope_Y/1000;		//As we require angle in milisecond basis
+		 MPU2.Angle += MPU2.Gyroscope_Y/1000;		//As we require angle in milisecond basis
 		 cal = sqrt(MPU1.Accelerometer_X*MPU1.Accelerometer_X+MPU1.Accelerometer_Y*MPU1.Accelerometer_Y+MPU1.Accelerometer_Z*MPU1.Accelerometer_Z);
-		 cal1 = sqrt(MPU2.Accelerometer_X*MPU2.Accelerometer_X+MPU2.Accelerometer_Y*MPU2.Accelerometer_Y+MPU2.Accelerometer_Z*MPU2.Accelerometer_Z);
+		cal1 = sqrt(MPU2.Accelerometer_X*MPU2.Accelerometer_X+MPU2.Accelerometer_Y*MPU2.Accelerometer_Y+MPU2.Accelerometer_Z*MPU2.Accelerometer_Z);
      MPU1.Accel_Angle = asin((float)MPU1.Accelerometer_X/cal)*RAD_TO_DEG;
 		 MPU2.Accel_Angle = asin((float)MPU2.Accelerometer_X/cal1)*RAD_TO_DEG;
 
