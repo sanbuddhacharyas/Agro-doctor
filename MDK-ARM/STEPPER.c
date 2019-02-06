@@ -178,13 +178,14 @@ void Initialize_Steppers(void)
 		
 		Left_Right.Signal = STEPPER_LEFT_RIGHT_SIGNAL;
 		Left_Right.Direction = STEPPER_LEFT_RIGHT_DIRECTION;
-		Left_Right.p_scalar = 25;
 		
 		First_Arm.Signal = STEPPER_FIRST_ARM_SIGNAL;
 		First_Arm.Direction = STEPPER_FIRST_ARM_DIRECTION;
+		First_Arm.p_scalar = 30;
 		
 		Second_Arm.Signal = STEPPER_SECOND_ARM_SIGNAL;
 		Second_Arm.Direction = STEPPER_SECOND_ARM_DIRECTION;
+		Second_Arm.p_scalar = 30;
 		
 		Rotor.Port = STEPPER_PORT_ROTOR;
 	  Left_Right.Port = STEPPER_PORT_LEFT_RIGHT;

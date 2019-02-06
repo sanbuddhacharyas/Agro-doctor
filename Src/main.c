@@ -38,9 +38,15 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "Headers.h"
+#include "stm32f4xx_hal.h"
+#include "adc.h"
+#include "i2c.h"
+#include "tim.h"
+#include "usart.h"
+#include "gpio.h"
 
 /* USER CODE BEGIN Includes */
+#include "Headers.h"
 
 #define RAD_TO_DEG 57.295779513082320876798154814105
 #define PI 3.1415926535897932384626433832795
@@ -94,8 +100,8 @@ void SystemClock_Config(void);
 
 /* USER CODE BEGIN 0 */
 
-MPU6050 MPU1 = {0xD2, 2};
-MPU6050 MPU2 = {0xD0 , 1};
+MPU6050 MPU1 = {0xD0, 1};
+MPU6050 MPU2 = {0xD2 , 2};
 
 /* USER CODE END 0 */
 
@@ -159,7 +165,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	//Initialize_Steppers();
+	Initialize_Steppers();
 	HAL_Delay(200);
 	MPU6050_Initialize(&MPU1);
 	MPU6050_Initialize(&MPU2);
@@ -169,6 +175,8 @@ int main(void)
 	//Calibrate_Base();
 	//Rotor.throttel = -10;			//For base calibration
 	HAL_TIM_Base_Start_IT(&htim2);
+	HAL_TIM_Base_Start_IT(&htim5);
+	HAL_TIM_Base_Start_IT(&htim9);
 	TIM2->CNT = 0;
   while (1)
   {
@@ -341,7 +349,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM4)			//Stepper_Refresher(20us)
 	{
-		
 		/******************ROTOR CALCULATIONS*****************/
 		if(calibrated == CALIBRATING)
 		{
@@ -365,11 +372,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		Pulse_Width_Calculator(&Second_Arm);
 	}
 	
-	//PID For motor
-	if(htim->Instance == TIM5)				//PID Refresher(1ms)
+		if(htim->Instance == TIM9)			
 	{
-		PID_calculate(&First_Arm,set_arm_first,my_angle1);
-		PID_calculate(&Second_Arm,set_arm_second,my_angle2);
+		sprintf(tx_data,"10x%dp%dq%dr",First_Arm.throttel , Second_Arm.throttel , Rotor.throttel);
+		//sprintf(tx_data,"10x10p10q10r");
+		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),10);
+	}
+	
+	//PID For motor
+	if(htim->Instance == TIM5)				//PID Refresher(5ms)
+	{
+		PID_calculate(&First_Arm,set_arm_first,MPU1.Angle);
+		PID_calculate(&Second_Arm,set_arm_second,MPU2.Angle);
 		
 		/*******************WHEEL CALCULATIONS**************************/
 		_pid = pid(ds, 1000, 0 );
@@ -406,8 +420,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	{
 	   MPU_SHOW_DATA(&MPU1);			//This will give raw data(CAution!!!!!)
 		 MPU_SHOW_DATA(&MPU2);			//This will give raw data(CAution!!!!!)
-     MPU1.Angle += MPU1.Gyroscope_Y/1000;		//As we require angle in milisecond basis
-		 MPU2.Angle += MPU2.Gyroscope_Y/1000;		//As we require angle in milisecond basis
+     MPU1.Angle += MPU1.Gyroscope_Y/100;		//As we require angle in milisecond basis
+		 MPU2.Angle += MPU2.Gyroscope_Y/100;		//As we require angle in milisecond basis
 		 cal = sqrt(MPU1.Accelerometer_X*MPU1.Accelerometer_X+MPU1.Accelerometer_Y*MPU1.Accelerometer_Y+MPU1.Accelerometer_Z*MPU1.Accelerometer_Z);
 		cal1 = sqrt(MPU2.Accelerometer_X*MPU2.Accelerometer_X+MPU2.Accelerometer_Y*MPU2.Accelerometer_Y+MPU2.Accelerometer_Z*MPU2.Accelerometer_Z);
      MPU1.Accel_Angle = asin((float)MPU1.Accelerometer_X/cal)*RAD_TO_DEG;
@@ -424,6 +438,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			MPU2.Angle = MPU2.Accel_Angle;
 			set_gyro_angle = 1;
 		}
+	
 //		sprintf(string,"Angle ->%f\r\n",MPU1.Angle);
 //	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
 	}	
