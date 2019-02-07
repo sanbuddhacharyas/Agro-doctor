@@ -1,6 +1,7 @@
 #include "STEPPER.h"
-#include "math.h"
+#include <math.h>
 #include <stdio.h>
+#include "usart.h"
 
 #define SCALE 24
 float linear_encoder_in_cm = 120;		//Resolution:120 lines per centimeters
@@ -18,6 +19,8 @@ float derivative = 0;
 float left_right_error =0;
 float test , test1;
 char AVR_Data[50] = {0};
+int ct = 0;
+extern int setting;
 
 extern volatile uint32_t encoder_reading_wheel;
 extern volatile uint32_t encoder_reading_left_right;
@@ -162,13 +165,35 @@ void set_rotor_angle(int input_angle)
 	if(fabs((float)input_angle - angle) > 0.1)
 	{
 		if(input_angle > angle)
-		Rotor.throttel =10;
-	else
-		Rotor.throttel = -10;
+		Rotor.throttel =7;
+		else
+		Rotor.throttel = -7;
+//	Rotor.throttel =ROTOR_CLOCKWISE;
 	}
 	else
 		Rotor.throttel = 0;
-	
+	/*ct ++;
+	if(ct>=100)
+	{
+		if(Rotor.throttel == ROTOR_ANTICLOCKWISE)
+		{
+			sprintf(AVR_Data,"b");
+			HAL_UART_Transmit(&huart2,(uint8_t *)&AVR_Data,sizeof(AVR_Data),0xFFFF);
+		}
+		
+	if(Rotor.throttel == ROTOR_CLOCKWISE)
+		{
+			sprintf(AVR_Data,"a");
+			HAL_UART_Transmit(&huart2,(uint8_t *)&AVR_Data,sizeof(AVR_Data),0xFFFF);
+		}
+		
+		if(Rotor.throttel == 0)
+		{
+			sprintf(AVR_Data,"c");
+			HAL_UART_Transmit(&huart2,(uint8_t *)&AVR_Data,sizeof(AVR_Data),0xFFFF);
+		}
+		ct = 0;
+	}*/
 }
 
 void Initialize_Steppers(void)
@@ -203,7 +228,48 @@ void Send_Throttels_To_AVR(void)
 	sprintf(AVR_Data,"%dp%dq%dr",First_Arm.throttel , Second_Arm.throttel , Rotor.throttel);
 }
 	
+void Nozzle_On(void)
+{
+	HAL_GPIO_WritePin(Nozzle1_In1_GPIO_Port , Nozzle1_In1_Pin , GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(Nozzle1_In2_GPIO_Port , Nozzle1_In2_Pin , GPIO_PIN_RESET);
+	
+	HAL_GPIO_WritePin(Nozzle2_In1_GPIO_Port , Nozzle2_In1_Pin , GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(Nozzle2_In2_GPIO_Port , Nozzle2_In2_Pin , GPIO_PIN_RESET);
+	
+	htim8.Instance->CCR1 = 2000;
+	htim8.Instance->CCR2 = 2000 ;
+	HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_2);
+}
 
+void Nozzle_Off(void)
+{
+	htim8.Instance->CCR1 = 0;
+	htim8.Instance->CCR2 = 0 ;
+	HAL_TIM_PWM_Stop(&htim8,TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(&htim8,TIM_CHANNEL_2);
+}
+
+void Set_To_Position(void)
+{
+	sprintf(AVR_Data,"a");
+	for(int i = 0;i<5 ;i++)
+	{
+	HAL_UART_Transmit(&huart2,(uint8_t *)&AVR_Data,sizeof(AVR_Data),0xFFFF);
+		HAL_Delay(5);
+	}
+	
+}
+void Stop(void)
+{
+		sprintf(AVR_Data,"c");
+	for(int i = 0;i<20;i++)
+	{
+	HAL_UART_Transmit(&huart2,(uint8_t *)&AVR_Data,sizeof(AVR_Data),0xFFFF);
+		HAL_Delay(5);
+	}
+	
+}
+	
 /*   After calibration, make the initial value as 5000.
 Calculate present position i.e. current angle everytime in f4xx_it.c by taking the difference of latest counts.*/
-

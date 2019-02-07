@@ -19,8 +19,9 @@ MOTOR 4(Second_Arm):	STEP = PB4
 
 
 ****************STEPPERS******************/
+/******************Original
 
-#define STEPPER_PORT_ROTOR GPIOE
+#define STEPPER_PORT_ROTOR GPIOE						
 #define STEPPER_PORT_LEFT_RIGHT GPIOC
 #define STEPPER_PORT_FIRST_ARM GPIOE
 #define STEPPER_PORT_SECOND_ARM GPIOB
@@ -35,11 +36,52 @@ MOTOR 4(Second_Arm):	STEP = PB4
 #define STEPPER_FIRST_ARM_DIRECTION GPIO_PIN_5
 #define STEPPER_SECOND_ARM_DIRECTION GPIO_PIN_5
 
+*/
+/*
+#define STEPPER_PORT_ROTOR GPIOE						//Left_right means Second_Arm
+#define STEPPER_PORT_LEFT_RIGHT GPIOC
+#define STEPPER_PORT_FIRST_ARM GPIOE
+#define STEPPER_PORT_SECOND_ARM GPIOC
+
+#define STEPPER_ROTOR_SIGNAL	GPIO_PIN_1
+#define STEPPER_LEFT_RIGHT_SIGNAL GPIO_PIN_13
+#define STEPPER_FIRST_ARM_SIGNAL GPIO_PIN_4
+#define STEPPER_SECOND_ARM_SIGNAL GPIO_PIN_13
+
+#define STEPPER_ROTOR_DIRECTION GPIO_PIN_0
+#define STEPPER_LEFT_RIGHT_DIRECTION GPIO_PIN_15
+#define STEPPER_FIRST_ARM_DIRECTION GPIO_PIN_5
+#define STEPPER_SECOND_ARM_DIRECTION GPIO_PIN_15
+*/
+
+#define STEPPER_PORT_ROTOR GPIOC						//lr and rotor means same
+#define STEPPER_PORT_LEFT_RIGHT GPIOC
+#define STEPPER_PORT_FIRST_ARM GPIOE
+#define STEPPER_PORT_SECOND_ARM GPIOB
+
+#define STEPPER_ROTOR_SIGNAL	GPIO_PIN_13
+#define STEPPER_LEFT_RIGHT_SIGNAL GPIO_PIN_13
+#define STEPPER_FIRST_ARM_SIGNAL GPIO_PIN_4
+#define STEPPER_SECOND_ARM_SIGNAL GPIO_PIN_4
+
+#define STEPPER_ROTOR_DIRECTION GPIO_PIN_15
+#define STEPPER_LEFT_RIGHT_DIRECTION GPIO_PIN_15
+#define STEPPER_FIRST_ARM_DIRECTION GPIO_PIN_5
+#define STEPPER_SECOND_ARM_DIRECTION GPIO_PIN_5
+
 #define sig_port GPIOD
 #define sig1 GPIO_PIN_5
 #define sig2 GPIO_PIN_6
+
+#define Nozzle_In1_Port	GPIOD
+#define Nozzle_In2_Port	GPIOC
+#define Nozzle_In1_Signal_Pin	GPIO_PIN_0
+#define Nozzle_In2_Signal_Pin	GPIO_PIN_12
 #define HIGH GPIO_PIN_SET
 #define LOW  GPIO_PIN_RESET
+
+#define ROTOR_CLOCKWISE 1
+#define ROTOR_ANTICLOCKWISE 2
 
 #define Right 1
 #define Left 0
@@ -58,6 +100,10 @@ float initial_angle(void);
 void Calibrate_Base(void);
 void Initialize_Steppers(void);
 void Send_Throttels_To_AVR(void);
+void Nozzle_On(void);
+void Nozzle_Off(void);
+void Set_To_Position(void);
+void Stop(void);
 
 typedef struct {
 	GPIO_TypeDef * Port;

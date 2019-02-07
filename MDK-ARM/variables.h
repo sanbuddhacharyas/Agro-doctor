@@ -36,7 +36,7 @@
 	uint32_t encoder_wheel_state=0;
 	uint32_t reading_pre=0;
 	float humid_percentage = 0;
-	int ds = 0 ,my_angle1 = 0 , my_angle2 = 0 ,my_angle = 0 ,temp_angle = 0 , set_arm_first = 55 , set_arm_second = 0 , adc_value = 0;
+	int ds = 0 ,my_angle1 = 0 , my_angle2 = 0 ,my_angle = 0 ,temp_angle = 0 , set_arm_first = 0 , set_arm_second = 45 , adc_value = 0;
 	char str[30];
 	char tx_data[100];
 	int checker = 0;

@@ -69,6 +69,14 @@
 #define Stopper_Interrupt_EXTI_IRQn EXTI15_10_IRQn
 #define LED_Pin GPIO_PIN_14
 #define LED_GPIO_Port GPIOD
+#define Nozzle1_In1_Pin GPIO_PIN_12
+#define Nozzle1_In1_GPIO_Port GPIOC
+#define Nozzle1_In2_Pin GPIO_PIN_0
+#define Nozzle1_In2_GPIO_Port GPIOD
+#define Nozzle2_In2_Pin GPIO_PIN_3
+#define Nozzle2_In2_GPIO_Port GPIOD
+#define Nozzle2_In1_Pin GPIO_PIN_4
+#define Nozzle2_In1_GPIO_Port GPIOD
 #define Stepper4_Signal_Pin GPIO_PIN_4
 #define Stepper4_Signal_GPIO_Port GPIOB
 #define Stepper4_Direction_Pin GPIO_PIN_5

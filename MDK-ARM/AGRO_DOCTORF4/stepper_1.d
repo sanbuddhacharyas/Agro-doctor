@@ -37,3 +37,4 @@ agro_doctorf4\stepper_1.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim
 agro_doctorf4\stepper_1.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 agro_doctorf4\stepper_1.o: ../Inc/tim.h
 agro_doctorf4\stepper_1.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+agro_doctorf4\stepper_1.o: ../Inc/usart.h
