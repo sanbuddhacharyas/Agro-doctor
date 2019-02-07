@@ -1,7 +1,6 @@
 #ifndef MPU6050_H_
 #define MPU6050_H_
 
-
 #include "stm32f4xx_hal.h"
 #include "i2c.h"
 #include "usart.h"
@@ -56,6 +55,7 @@ void MPU6050_Initialize(MPU6050* Datastruct);
 void MPU_GET_VALUE(MPU6050* Datastruct);
 void MPU_SHOW_DATA(MPU6050* Datastruct);
 void MPU_GYRO_CAL(void);
+void Read_Initial_Angles(void);
 
 #endif
 

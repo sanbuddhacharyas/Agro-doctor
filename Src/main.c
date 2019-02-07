@@ -64,8 +64,8 @@
 /* Private variables ---------------------------------------------------------*/
 /*************Initializtions****************/
 
-	int nozzle;
-	int mpu1_temp , mpu2_temp;
+int nozzle;
+
 	STEPPER Rotor;
 	STEPPER Left_Right;
 	STEPPER First_Arm;
@@ -148,40 +148,32 @@ int main(void)
 	HAL_ADC_Start_IT(&hadc1);
 	//HAL_TIM_Base_Start_IT(&htim6);
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx2 ,1 );
-	HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx3 ,1 );
+	HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx3 ,1 );*/
 	TIM1->CNT = 11;
 	encoder_reading_wheel = 11;
-	encoder_reading_pre =11;
-	direction_left_right =0 ;*/
-	TIM3->CNT = 5000;
-	HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx2 ,1 );
+	HAL_TIM_Encoder_Start_IT(&htim1,TIM_CHANNEL_ALL); 				//Timer1 Encoder for Wheel
+	HAL_TIM_Encoder_Start_IT(&htim2,TIM_CHANNEL_ALL);					//Timer2 Encoder for First_Arm
+	HAL_TIM_Encoder_Start_IT(&htim3,TIM_CHANNEL_ALL);					//Timer3 Encoder for Second_Arm
+	HAL_TIM_Base_Start_IT(&htim4);
+	HAL_TIM_Base_Start_IT(&htim5);
 	HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_3);
 	HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_1);
-	HAL_TIM_Encoder_Start_IT(&htim1,TIM_CHANNEL_ALL); 
-	HAL_TIM_Encoder_Start_IT(&htim2,TIM_CHANNEL_ALL);
-	HAL_TIM_Encoder_Start_IT(&htim3,TIM_CHANNEL_ALL);
-	
+	HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx2 ,1 );
+	HAL_TIM_Base_Start_IT(&htim9);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	Initialize_Steppers();
 	HAL_Delay(200);
-	//MPU6050_Initialize(&MPU1);
-	//MPU6050_Initialize(&MPU2);
-		//HAL_TIM_Base_Start_IT(&htim1);
-		//TIM1->CNT = 0;
-	//MPU_GYRO_CAL_Y(&MPU1);
-	//Calibrate_Base();
-
-	TIM2->CNT = 0;
-	HAL_Delay(8000);
-	Set_To_Position();
-	HAL_Delay(8000);					//Time required to calibrate to the position
-	//HAL_UART_Transmit(&huart2,(uint8_t *)&tx_data,sizeof(tx_data),0xFFFF);
-	Stop();
-	calibrated = TRUE;
+	MPU6050_Initialize(&MPU1);
+	MPU6050_Initialize(&MPU2);
+	Initialize_Steppers();
+	Initialize_Encoder_Counts();
+	Read_Initial_Angles();
+	
+	
+	HAL_Delay(200);
 	
   while (1)
   {
@@ -193,104 +185,9 @@ int main(void)
 		{
 				Nozzle_On();
 		}
-	/*	Left_Right.throttel = 30;
-		HAL_Delay(7000);
-		Left_Right.throttel = -30;
-		HAL_Delay(7000);*/
-//		First_Arm.throttel = 20;
-//		Second_Arm.throttel = 20;
-		//set_rotor_angle(20);
-		//MPU_GET_VALUE(&MPU1);
-//		checker = MPU1.Angle;
-//	PID_calculate(&MPU1,&MOTOR_1,setting);
 		//sprintf(tx_data,"Angle1: %d , Angle2: %d\r\n",MPU1.Angle , MPU2.Angle);
 		//HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
 	//	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
-//		sprintf(tx_data,"Angle: %f , Setpoint: %d , error: %f , throttel: %d\r\n",MPU1.Angle , MOTOR_1.setpoint,MOTOR_1.pid_error , MOTOR_1.throttel);
-//		HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
-//		HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
-		//my_angle = left_right_angle();
-//		HAL_GPIO_WritePin(stepper_port,stepper1_dir,HIGH);
-		//displacement = distance_travelled(encoder_reading_wheel);
-	//set_angle(30,Right);
-		/*
-		if(HAL_GetTick() - x >= dt)
-		{
-			x = HAL_GetTick();
-			omega = (6.2831 * TIM4->CNT*50)/4320;
-			TIM4->CNT =0;
-			printf("%f\n",omega);
-		}
-		*/
-	//angle = left_right_angle();
-	//  set_angle(10, Right);
-	/*	if(rec == 0)
-		{
-			throttel_left = 0;
-			throttel_right = 0;
-			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
-			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
-		}
-		
-		 else if(rec == 1)
-		{
-				ds  = 40;
-				distance =  ds *fullcounter * 0.018181818182 ;
-				move(distance, 20 ,Front);
-				//HAL_Delay(500);
-				//set_angle(-15,Left);
-				//HAL_Delay(1000);
-				//TIM4->CNT = 0;
-				//encoder_reading_wheel = 0;
-				//encoder_reading_pre =0;
-				//move(3000, 20 ,Front);
-		}
-		else if(rec == 2)
-		{
-			HAL_GPIO_WritePin(sig_port,sig2,GPIO_PIN_SET);
-			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_RESET);
-			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
-			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-		}	
-		
-		//turning left
-		else if(rec == 3)
-		{
-			throttel_left =  30;
-			throttel_right = 30;
-			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
-		}
-		else if(rec == 4)
-		{
-			throttel_left = -30;
-			throttel_right = -30;
-			HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
-		}
-		
-		
-		//Moving right with curvy step
-		else if(rec == 6)
-		{
-			throttel_left = 60 ;
-			throttel_right = 60; 
-			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
-			HAL_GPIO_WritePin(sig_port,sig2,GPIO_PIN_RESET);
-			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
-			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-		}
-		//Moving left with curvy step
-		else if(rec == 5)
-		{
-			throttel_left = -70 ;
-			throttel_right = -70 ;
-			HAL_GPIO_WritePin(sig_port,sig1,GPIO_PIN_SET);
-			HAL_GPIO_WritePin(sig_port,sig2,GPIO_PIN_RESET);
-			htim2.Instance->CCR1 = (int)((20 - forward_speed) * (2800 / 17));
-			HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-			
-			}
-	*/
 }
   /* USER CODE END WHILE */
 
@@ -360,46 +257,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM4)			//Stepper_Refresher(20us)
 	{
-		/******************ROTOR CALCULATIONS*****************/
-		/******************ROTOR CALCULATIONS*****************/
-		/*
 	  Pulse_Width_Calculator(&Rotor);
 		Pulse_Width_Calculator(&Left_Right);
 		Pulse_Width_Calculator(&First_Arm);
-		Pulse_Width_Calculator(&Second_Arm);*/
-	}
-	
-	if(htim->Instance == TIM9)			
-	{ 
-		//sprintf(tx_data,"10x%dp%dq%dr",First_Arm.throttel , Second_Arm.throttel , Rotor.throttel);
-		if(calibrated == TRUE)
-		{
-			sprintf(tx_data,"10x%dp%dq",First_Arm.throttel , Second_Arm.throttel);
-			//sprintf(tx_data,"10x10p10q10r");
-			HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),10);
-		}
+		Pulse_Width_Calculator(&Second_Arm);
 	}
 	
 	//PID For motor
 	if(htim->Instance == TIM5)				//PID Refresher(5ms)
-	{
-		/*	if(calibrated == CALIBRATING)
-		{
-			set_rotor_angle(setting);
-			if(current_angle >=31)
-			{
-				current_angle = 0;
-				setting = 0;
-				current_encoder_reading = 0;
-				calibrated = TRUE;
-			}
-		}
-		else if (calibrated == TRUE)*/
-		//set_rotor_angle(setting);
-		
-		PID_calculate(&First_Arm,set_arm_first,MPU1.Angle);
-		//PID_calculate(&Second_Arm,set_arm_second,MPU2.Angle);
-		PID_calculate(&Second_Arm,set_arm_second,MPU2.Angle);
+	{ 
+		PID_calculate(&First_Arm,set_arm_first,Actual_Angle1);
+		PID_calculate(&Second_Arm,set_arm_second,Actual_Angle2);
 		
 		/*******************WHEEL CALCULATIONS**************************/
 		_pid = pid(ds, 1000, 0 );
@@ -424,15 +292,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_GPIO_WritePin(sig_port,sig2, GPIO_PIN_RESET);
 			HAL_TIM_PWM_Stop(&htim8,TIM_CHANNEL_3);
 		}		
-		
 		/*******************WHEEL CALCULATIONS**************************/
-		
-			/*******************LEFT_RIGHT CALCULATIONS**************************/
-		//	set_angle(my_angle,NULL);
-			/*******************LEFT_RIGHT CALCULATIONS**************************/
 	}
 	
-	/*if(htim->Instance == TIM2)			//Angle Calculator(5 ms)
+	if(htim->Instance == TIM9)			//Angle Calculator(5 ms)
 	{
 	   MPU_SHOW_DATA(&MPU1);			//This will give raw data(CAution!!!!!)
 		 MPU_SHOW_DATA(&MPU2);			//This will give raw data(CAution!!!!!)
@@ -454,10 +317,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			MPU2.Angle = MPU2.Accel_Angle;
 			set_gyro_angle = 1;
 		}
-	
-//		sprintf(string,"Angle ->%f\r\n",MPU1.Angle);
-//	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
-	}	*/
+	}
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)

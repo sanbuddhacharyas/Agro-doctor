@@ -44,6 +44,7 @@
 	extern float current_angle;
 	extern int calibrated;
 	extern int current_encoder_reading;
+	extern int Actual_Angle1, Actual_Angle2; 
 	#define TRUE 1
 	
 	#define CALIBRATING 3

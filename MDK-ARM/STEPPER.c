@@ -31,7 +31,7 @@ extern volatile float velocity;
 extern volatile int throttel_left, throttel_right;
 extern volatile uint16_t encoder_reading_pre;
 extern volatile int total_distance ;
-extern float current_angle;
+//extern float current_angle;
 int input = 0;
 
 	extern STEPPER Rotor;
@@ -157,7 +157,7 @@ float initial_angle(void)
 	
 	return ((float)(encoder_reading_wheel/24));
 }
-	
+	/*
 void set_rotor_angle(int input_angle)
 {
 	int angle = current_angle;
@@ -168,34 +168,12 @@ void set_rotor_angle(int input_angle)
 		Rotor.throttel =7;
 		else
 		Rotor.throttel = -7;
-//	Rotor.throttel =ROTOR_CLOCKWISE;
 	}
 	else
 		Rotor.throttel = 0;
-	/*ct ++;
-	if(ct>=100)
-	{
-		if(Rotor.throttel == ROTOR_ANTICLOCKWISE)
-		{
-			sprintf(AVR_Data,"b");
-			HAL_UART_Transmit(&huart2,(uint8_t *)&AVR_Data,sizeof(AVR_Data),0xFFFF);
-		}
-		
-	if(Rotor.throttel == ROTOR_CLOCKWISE)
-		{
-			sprintf(AVR_Data,"a");
-			HAL_UART_Transmit(&huart2,(uint8_t *)&AVR_Data,sizeof(AVR_Data),0xFFFF);
-		}
-		
-		if(Rotor.throttel == 0)
-		{
-			sprintf(AVR_Data,"c");
-			HAL_UART_Transmit(&huart2,(uint8_t *)&AVR_Data,sizeof(AVR_Data),0xFFFF);
-		}
-		ct = 0;
-	}*/
-}
-
+	}
+*/
+	
 void Initialize_Steppers(void)
 	{
 		Rotor.Signal = STEPPER_ROTOR_SIGNAL;
@@ -217,16 +195,6 @@ void Initialize_Steppers(void)
 		First_Arm.Port = STEPPER_PORT_FIRST_ARM;
 		Second_Arm.Port = STEPPER_PORT_SECOND_ARM;
 	}
-		
-void Calibrate_Base(void)
-{
-	throttel_left = -10;
-}
-
-void Send_Throttels_To_AVR(void)
-{
-	sprintf(AVR_Data,"%dp%dq%dr",First_Arm.throttel , Second_Arm.throttel , Rotor.throttel);
-}
 	
 void Nozzle_On(void)
 {
@@ -250,25 +218,10 @@ void Nozzle_Off(void)
 	HAL_TIM_PWM_Stop(&htim8,TIM_CHANNEL_2);
 }
 
-void Set_To_Position(void)
+void Initialize_Encoder_Counts(void)
 {
-	sprintf(AVR_Data,"a");
-	for(int i = 0;i<5 ;i++)
-	{
-	HAL_UART_Transmit(&huart2,(uint8_t *)&AVR_Data,sizeof(AVR_Data),0xFFFF);
-		HAL_Delay(5);
-	}
-	
-}
-void Stop(void)
-{
-		sprintf(AVR_Data,"c");
-	for(int i = 0;i<20;i++)
-	{
-	HAL_UART_Transmit(&huart2,(uint8_t *)&AVR_Data,sizeof(AVR_Data),0xFFFF);
-		HAL_Delay(5);
-	}
-	
+	TIM2->CNT = 25000;
+	TIM3->CNT = 25000;
 }
 	
 /*   After calibration, make the initial value as 5000.

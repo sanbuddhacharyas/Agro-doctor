@@ -15,6 +15,13 @@ float angle_gyro=0,del_x,count;
 int set_gyro_angle = 0;
 uint8_t data[14];
 char string[100];
+int Calibrated_Angle1 = 0 ,Calibrated_Angle2 = 0; 
+
+extern MPU6050 MPU1;
+extern MPU6050 MPU2;
+extern MPU6050 MPU3;
+extern TIM_HandleTypeDef htim9;
+	
 
 #define RAD_TO_DEG 57.295779513082320876798154814105
 #define PI 3.1415926535897932384626433832795
@@ -138,4 +145,16 @@ void MPU_SHOW_DATA(MPU6050* Datastruct)
 //		sprintf(string,"Accelerometer_X = %f , Accelerometer_Y = %f , Accelerometer_Z = %f\r\n",
 //		Datastruct->Accelerometer_X,Datastruct->Accelerometer_Y,Datastruct->Accelerometer_Z);
 //	  HAL_UART_Transmit(&huart2,(uint8_t *)&string,sizeof(string),0xFFFF);
+}
+
+void Read_Initial_Angles(void)
+{
+HAL_Delay(50);
+Calibrated_Angle1 = MPU1.Angle;
+Calibrated_Angle2 = MPU2.Angle;
+
+//HAL_I2C_DeInit(&hi2c1);
+//HAL_I2C_DeInit(&hi2c2);	
+
+//HAL_TIM_Base_DeInit(&htim9);
 }

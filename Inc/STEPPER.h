@@ -37,7 +37,7 @@ MOTOR 4(Second_Arm):	STEP = PB4
 #define STEPPER_SECOND_ARM_DIRECTION GPIO_PIN_5
 
 */
-/*
+
 #define STEPPER_PORT_ROTOR GPIOE						//Left_right means Second_Arm
 #define STEPPER_PORT_LEFT_RIGHT GPIOC
 #define STEPPER_PORT_FIRST_ARM GPIOE
@@ -52,8 +52,8 @@ MOTOR 4(Second_Arm):	STEP = PB4
 #define STEPPER_LEFT_RIGHT_DIRECTION GPIO_PIN_15
 #define STEPPER_FIRST_ARM_DIRECTION GPIO_PIN_5
 #define STEPPER_SECOND_ARM_DIRECTION GPIO_PIN_15
-*/
 
+/*
 #define STEPPER_PORT_ROTOR GPIOC						//lr and rotor means same
 #define STEPPER_PORT_LEFT_RIGHT GPIOC
 #define STEPPER_PORT_FIRST_ARM GPIOE
@@ -68,6 +68,7 @@ MOTOR 4(Second_Arm):	STEP = PB4
 #define STEPPER_LEFT_RIGHT_DIRECTION GPIO_PIN_15
 #define STEPPER_FIRST_ARM_DIRECTION GPIO_PIN_5
 #define STEPPER_SECOND_ARM_DIRECTION GPIO_PIN_5
+*/
 
 #define sig_port GPIOD
 #define sig1 GPIO_PIN_5
@@ -104,6 +105,7 @@ void Nozzle_On(void);
 void Nozzle_Off(void);
 void Set_To_Position(void);
 void Stop(void);
+void Initialize_Encoder_Counts(void);
 
 typedef struct {
 	GPIO_TypeDef * Port;

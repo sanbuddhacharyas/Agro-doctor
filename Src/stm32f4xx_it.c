@@ -45,6 +45,7 @@ extern volatile int32_t encoder_reading_wheel;
 extern volatile uint32_t encoder_reading_left_right;
 extern volatile uint8_t direction_wheel;
 extern volatile uint8_t direction_left_right;
+extern int First_Arm_Angle , Second_Arm_Angle;
 extern int setting;
 uint8_t count1=1;
 extern uint32_t encoder_wheel_state;
@@ -56,21 +57,26 @@ int total_encoder;
 int c;
 extern volatile int total_distance ;
 int calibrated = 0;																												//Already calibrated made true
-int32_t previous_count = 5000 , new_count = 0, current_encoder_reading = 0;
-float current_angle = 0 ,difference = 0 ;
-int CURRENT_ROTATION ;
+int32_t First_Arm_Previous_count = 25000, First_Arm_New_count = 0, First_Arm_Current_Reading = 0;
+int32_t Second_Arm_Previous_count = 25000, Second_Arm_New_count = 0, Second_Arm_Current_Reading = 0;
+float First_Arm_Current_angle = 0 ,Second_Arm_Current_angle = 0 ,difference2 = 0 , difference3 = 0;
+int First_Arm_Current_Rotation =0 , Second_Arm_Current_Rotation = 0;
 
 //uint32_t encoder_reading_wheel_prev;
 //uint32_t encoder_reading_left_right_prev;
 
+#define Encoder2_Resolution 13.5
+#define Encoder3_Resolution 24
 #define  ANTI_CLOCKWISE 1
-#define CLOCKWISE 0
+#define CLOCKWISE 2
 #define TRUE 1
 #define CALIBRATING 3
 
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern UART_HandleTypeDef huart2;
+extern int Calibrated_Angle1 ,Calibrated_Angle2; 
+int Actual_Angle1 = 0 , Actual_Angle2 = 0; 
 
 /* USER CODE END 0 */
 
@@ -272,23 +278,10 @@ void TIM1_CC_IRQHandler(void)
 	total_distance = distance_travelled( total_encoder);
 	
 	if(encoder_reading_wheel < TIM1->CNT)
-		
 		direction_wheel = Front;
 	else if(encoder_reading_wheel > TIM1->CNT)
 		direction_wheel = Back;
-	/*
-	if(c == 0)
-	{
-		if(encoder_reading_pre < 15 && encoder_reading_pre >10   && encoder_reading_pre < TIM4->CNT  )
-			encoder_wheel_state = 1;
-		
-		else if(encoder_reading_pre < (fullcounter) && encoder_reading_pre > (fullcounter -5) && encoder_reading_pre >TIM4->CNT)
-			encoder_wheel_state =0 ;
-		
-	}
-*/
-//	if(encoder_wheel_state == 1)
-//	{
+
 		if(encoder_reading_wheel > fullcounter && direction_wheel == Front)
 		{
 			c++;
@@ -302,26 +295,6 @@ void TIM1_CC_IRQHandler(void)
 			TIM4->CNT = fullcounter;
 		}
 		encoder_reading_wheel = TIM1->CNT;
-	//}
-	/*
-	else
-	{
-		if((-encoder_reading_wheel) > fullcounter && direction_wheel == Back)
-		{
-			c--;
-			TIM4->CNT = 10;
-		}
-		else if( -encoder_reading_wheel < 10 && -encoder_reading_wheel>0 && direction_wheel == Front )
-		{
-			c++;
-			TIM4->CNT = fullcounter;
-		}
-		
-		encoder_reading_wheel = -(fullcounter - TIM4->CNT);
-	}
-		*/
-	
-	
 	
   /* USER CODE END TIM1_CC_IRQn 1 */
 }
@@ -337,13 +310,25 @@ void TIM2_IRQHandler(void)
   HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */
 	
-	if(encoder_reading_left_right > TIM2->CNT)
-		direction_left_right = Right;
+		/**************MY_CODE**************/
+	First_Arm_New_count = TIM2->CNT;
+	if(First_Arm_New_count > First_Arm_Previous_count)		//This count was made 25000 (where overflow was 50,000) while interrupt occured
+	{
+		First_Arm_Current_Rotation = ANTI_CLOCKWISE;
+	}
+	if(First_Arm_New_count < First_Arm_Previous_count)
+	{
+		First_Arm_Current_Rotation = CLOCKWISE;
+	}
+	difference2 = (First_Arm_New_count - First_Arm_Previous_count);			//Because Channel A and Channel B was swapped
+	First_Arm_Current_Reading += difference2;
+	First_Arm_Current_angle += (difference2/Encoder2_Resolution);
+		Actual_Angle1 = Calibrated_Angle1 + First_Arm_Current_angle;
 	
-	else if(encoder_reading_left_right < TIM2->CNT)
-		direction_left_right = Left;
+	First_Arm_Previous_count = First_Arm_New_count;
 	
-	encoder_reading_left_right = TIM2->CNT;
+	/**************MY_CODE**************/
+	
   /* USER CODE END TIM2_IRQn 1 */
 }
 
@@ -353,29 +338,31 @@ void TIM2_IRQHandler(void)
 void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
-
+	
   /* USER CODE END TIM3_IRQn 0 */
   HAL_TIM_IRQHandler(&htim3);
   /* USER CODE BEGIN TIM3_IRQn 1 */
 	/**************MY_CODE**************/
-	new_count = TIM3->CNT;
-	if(new_count > previous_count)		//This count was made 5000 (where overflow was 10000) while interrupt occured
+	Second_Arm_New_count = TIM3->CNT;
+	if(Second_Arm_New_count > Second_Arm_Previous_count)		//This count was made 25000 (where overflow was 50,000) while interrupt occured
 	{
-		CURRENT_ROTATION = ANTI_CLOCKWISE;
+		Second_Arm_Current_Rotation = ANTI_CLOCKWISE;
 	}
-	if(new_count < previous_count)
+	if(Second_Arm_New_count < Second_Arm_Previous_count)
 	{
-		CURRENT_ROTATION = CLOCKWISE;
+		Second_Arm_Current_Rotation = CLOCKWISE;
 	}
-	difference = -(new_count - previous_count);			//Because Channel A and Channel B was swapped
-	current_encoder_reading += difference;
-	current_angle += (difference/24);
+	difference3 = (Second_Arm_New_count - Second_Arm_Previous_count);			//Because Channel A and Channel B was swapped
+	Second_Arm_Current_Reading += difference3;
+	Second_Arm_Current_angle += (difference3/Encoder3_Resolution);
+	
+	Actual_Angle2 = Calibrated_Angle2 + Second_Arm_Current_angle;
+	
 	//current_angle = difference / 24;
-	previous_count = new_count;
+	Second_Arm_Previous_count = Second_Arm_New_count;
 	
 	/**************MY_CODE**************/
 	
-
   /* USER CODE END TIM3_IRQn 1 */
 }
 
