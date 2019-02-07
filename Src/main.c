@@ -64,12 +64,15 @@
 /* Private variables ---------------------------------------------------------*/
 /*************Initializtions****************/
 
-int nozzle;
+int nozzle = 0;
 
 	STEPPER Rotor;
 	STEPPER Left_Right;
 	STEPPER First_Arm;
 	STEPPER Second_Arm;
+	
+	extern int Calibrated_Angle1 ,Calibrated_Angle2;
+	extern int wheel_pid_error;
 	
 struct __FILE{
 	
@@ -171,9 +174,14 @@ int main(void)
 	Initialize_Steppers();
 	Initialize_Encoder_Counts();
 	Read_Initial_Angles();
-	
-	
 	HAL_Delay(200);
+	Actual_Angle1 = Calibrated_Angle1;
+	Actual_Angle2 = Calibrated_Angle2;
+	
+	HAL_Delay(5000);
+	Rotor.throttel = 10;
+	HAL_Delay(15000);						//wait to base calibration 
+	Rotor.throttel = 0;
 	
   while (1)
   {
@@ -185,6 +193,15 @@ int main(void)
 		{
 				Nozzle_On();
 		}
+		
+	
+	 if((fabs(First_Arm.pid_error)<=1) && (fabs(Second_Arm.pid_error) <= 1)&&(wheel_pid_error<=3)&&(calibrated == CALIBRATING))		
+	 {
+		sprintf(tx_data,"1");
+		HAL_UART_Transmit(&huart3,(uint8_t*)&tx_data,sizeof(tx_data),10);
+		calibrated  = TRUE;
+	}
+	HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart_rx2 ,1 );
 		//sprintf(tx_data,"Angle1: %d , Angle2: %d\r\n",MPU1.Angle , MPU2.Angle);
 		//HAL_UART_Transmit(&huart2,(uint8_t*)&tx_data,sizeof(tx_data),0xFFFF);
 	//	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart_rx ,1 );
@@ -201,7 +218,6 @@ int main(void)
 */
 void SystemClock_Config(void)
 {
-
   RCC_OscInitTypeDef RCC_OscInitStruct;
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
 
@@ -350,6 +366,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 				buff_sum =0;
 				range =0;
+				calibrated  =CALIBRATING;
 			}
 			
 			 else if(uart_rx2 == 'q' )				//angle2
@@ -369,6 +386,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 				buff_sum =0;
 				range =0;
+				calibrated  =CALIBRATING;
 			}
 			
 			else  if(uart_rx2 == 'r' )				//rotor
@@ -407,13 +425,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 				buff_sum =0;
 				range =0;
+				calibrated  =CALIBRATING;
 			}
 			
-			else if(uart_rx2 == 'o' )				//left_right
+			else if(uart_rx2 == 'o' )				//Nozzle On
 			{
 				nozzle = 1;
 			}
-			else if(uart_rx2 == 'f' )	
+			else if(uart_rx2 == 'f' )			//Nozzle Off
 			{
 				nozzle = 0;
 			}

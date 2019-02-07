@@ -21,6 +21,7 @@ extern MPU6050 MPU1;
 extern MPU6050 MPU2;
 extern MPU6050 MPU3;
 extern TIM_HandleTypeDef htim9;
+extern int Actual_Angle1 , Actual_Angle2;
 	
 
 #define RAD_TO_DEG 57.295779513082320876798154814105
@@ -148,13 +149,14 @@ void MPU_SHOW_DATA(MPU6050* Datastruct)
 }
 
 void Read_Initial_Angles(void)
-{
+{ 
 HAL_Delay(50);
 Calibrated_Angle1 = MPU1.Angle;
 Calibrated_Angle2 = MPU2.Angle;
+	
 
-//HAL_I2C_DeInit(&hi2c1);
-//HAL_I2C_DeInit(&hi2c2);	
+HAL_I2C_DeInit(&hi2c1);
+HAL_I2C_DeInit(&hi2c2);	
 
-//HAL_TIM_Base_DeInit(&htim9);
+HAL_TIM_Base_DeInit(&htim9);
 }

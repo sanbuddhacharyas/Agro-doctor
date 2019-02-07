@@ -242,7 +242,7 @@ void ADC_IRQHandler(void)
   /* USER CODE BEGIN ADC_IRQn 0 */
 
   /* USER CODE END ADC_IRQn 0 */
-  HAL_ADC_IRQHandler(&hadc1);
+		HAL_ADC_IRQHandler(&hadc1);
   /* USER CODE BEGIN ADC_IRQn 1 */
 
   /* USER CODE END ADC_IRQn 1 */
@@ -292,6 +292,7 @@ void TIM1_CC_IRQHandler(void)
 		{
 			if(c!=0 )
 				c--;	
+			
 			TIM4->CNT = fullcounter;
 		}
 		encoder_reading_wheel = TIM1->CNT;
@@ -323,8 +324,8 @@ void TIM2_IRQHandler(void)
 	difference2 = (First_Arm_New_count - First_Arm_Previous_count);			//Because Channel A and Channel B was swapped
 	First_Arm_Current_Reading += difference2;
 	First_Arm_Current_angle += (difference2/Encoder2_Resolution);
-		Actual_Angle1 = Calibrated_Angle1 + First_Arm_Current_angle;
-	
+		Actual_Angle1 = Calibrated_Angle1 + First_Arm_Current_angle + Second_Arm_Current_angle;
+	//Calibrate both arms simultaneously
 	First_Arm_Previous_count = First_Arm_New_count;
 	
 	/**************MY_CODE**************/
@@ -357,6 +358,7 @@ void TIM3_IRQHandler(void)
 	Second_Arm_Current_angle += (difference3/Encoder3_Resolution);
 	
 	Actual_Angle2 = Calibrated_Angle2 + Second_Arm_Current_angle;
+	Actual_Angle1 = Calibrated_Angle1 + First_Arm_Current_angle + Second_Arm_Current_angle;
 	
 	//current_angle = difference / 24;
 	Second_Arm_Previous_count = Second_Arm_New_count;

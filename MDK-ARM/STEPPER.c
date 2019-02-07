@@ -9,7 +9,7 @@ float radius =3;
 float wheel_size = 55.6;
 float	travel = 0;
 float angl=0;
-int pid_error;
+int wheel_pid_error;
 int PID , desired_position;
 extern float p_scalar , i_scalar, d_scalar;
 float integral = 0;
@@ -123,18 +123,18 @@ Wind_up is the value to limit capacity of motor
 */
 int pid(int16_t set_distance,uint16_t wind_up,uint8_t mode)
 {
-	 pid_error = set_distance - total_distance;
+	 wheel_pid_error = set_distance - total_distance;
 	 if(PID >10 || PID < -10)
-		 pid_error += PID * 0.015 ;
+		 wheel_pid_error += PID * 0.015 ;
 
-	 proportional = pid_error * p_scalar;//Proportional 
+	 proportional = wheel_pid_error * p_scalar;//Proportional 
 	
-	 integral += pid_error * i_scalar; // Intregal 
+	 integral += wheel_pid_error * i_scalar; // Intregal 
 	 if(integral >  wind_up) integral = wind_up; // limit wind-up
 	 if(integral < - wind_up) integral =-wind_up;
 
-	 derivative = (pid_error - previous_error) * d_scalar;// Derivative
-	 previous_error = pid_error;
+	 derivative = (wheel_pid_error - previous_error) * d_scalar;// Derivative
+	 previous_error = wheel_pid_error;
 	 PID = proportional+derivative+integral; // Required PID
 	 if(PID > wind_up) PID = wind_up;
 	 if(PID <-wind_up)PID= -wind_up;
@@ -179,8 +179,8 @@ void Initialize_Steppers(void)
 		Rotor.Signal = STEPPER_ROTOR_SIGNAL;
 		Rotor.Direction = STEPPER_ROTOR_DIRECTION;
 		
-		Left_Right.Signal = STEPPER_LEFT_RIGHT_SIGNAL;
-		Left_Right.Direction = STEPPER_LEFT_RIGHT_DIRECTION;
+		//Left_Right.Signal = STEPPER_LEFT_RIGHT_SIGNAL;
+		//Left_Right.Direction = STEPPER_LEFT_RIGHT_DIRECTION;
 		
 		First_Arm.Signal = STEPPER_FIRST_ARM_SIGNAL;
 		First_Arm.Direction = STEPPER_FIRST_ARM_DIRECTION;
@@ -223,6 +223,7 @@ void Initialize_Encoder_Counts(void)
 	TIM2->CNT = 25000;
 	TIM3->CNT = 25000;
 }
+
 	
 /*   After calibration, make the initial value as 5000.
 Calculate present position i.e. current angle everytime in f4xx_it.c by taking the difference of latest counts.*/
