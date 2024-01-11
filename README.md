@@ -2,4 +2,4 @@ Agro-doctor is an agricultural robot that monitors our field, recognizes environ
 
 This agriculture friendly robot was awarded the winner of **LOCUS 2019 under Instrumentation Category**.
 
-Demo Video: https://drive.google.com/file/d/1oVY2Ok253zgtv8SeKkHy-z3ZCyjN5kzn/view?usp=sharing
+**Demo Video:** https://drive.google.com/file/d/1oVY2Ok253zgtv8SeKkHy-z3ZCyjN5kzn/view?usp=sharing
